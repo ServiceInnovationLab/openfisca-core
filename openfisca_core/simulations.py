@@ -8,9 +8,9 @@ import logging
 
 import dpath
 
-import periods
-from commons import empty_clone
-from tracers import Tracer
+import openfisca_core.periods
+from openfisca_core.commons import empty_clone
+from openfisca_core.tracers import Tracer
 
 
 log = logging.getLogger(__name__)
