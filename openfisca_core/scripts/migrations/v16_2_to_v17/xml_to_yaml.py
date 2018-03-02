@@ -26,7 +26,7 @@ def custom_unicode_representer(dumper, data):
     if re.match(r'^\d{4}-\d{2}-\d{2}$', data):
         tag = u'tag:yaml.org,2002:timestamp'
         return dumper.represent_scalar(tag, data)
-    return dumper.represent_unicode(data)
+    return dumper.represent_str(data)
 
 
 yaml.add_representer(str, custom_str_representer, Dumper=yaml.SafeDumper)
@@ -122,9 +122,9 @@ def transform_etree_to_json_recursive(xml_node):
             if 'reference' not in json_node:
                 json_node['reference'] = value
         elif key in {'description', 'reference'}:
-            json_node[key] = unicode(value)
+            json_node[key] = str(value)
         else:
-            raise ValueError(u'Unknown attribute "{}": "{}"'.format(key, value).encode('utf-8'))
+            raise ValueError(u'Unknown attribute "{}": "{}"'.format(key, value))
 
     if xml_node.tag == 'NODE':
         json_node['type'] = 'node'
@@ -165,7 +165,7 @@ def transform_etree_to_json_recursive(xml_node):
             elif child.tag == 'MONTANT':
                 json_node['amount'] = new_child
             else:
-                raise ValueError(u'Unknown TRANCHE child {}'.format(child.tag).encode('utf-8'))
+                raise ValueError(u'Unknown TRANCHE child {}'.format(child.tag))
 
     elif xml_node.tag == 'TAUX':
         json_node = transform_values_history(xml_node, value_format)
@@ -183,7 +183,7 @@ def transform_etree_to_json_recursive(xml_node):
         pass
 
     else:
-        raise ValueError(u'Unknown tag {}'.format(xml_node.tag).encode('utf-8'))
+        raise ValueError(u'Unknown tag {}'.format(xml_node.tag))
 
     return name, json_node
 
@@ -214,7 +214,7 @@ def merge(name_list, json_list, path_list):
                     'type': 'node',
                     }
 
-        assert name not in pointer, u'{} is defined twice'.format('.'.join(path) + '.' + 'name').encode('utf-8')
+        assert name not in pointer, u'{} is defined twice'.format('.'.join(path) + '.' + 'name')
         pointer[name] = json_tree
 
     return merged_json

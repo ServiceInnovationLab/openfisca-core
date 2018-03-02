@@ -26,10 +26,10 @@ log = logging.getLogger(__name__)
 
 def _config_yaml(yaml):
 
-    class folded_unicode(unicode):
+    class folded_unicode(str):
         pass
 
-    class literal_unicode(unicode):
+    class literal_unicode(str):
         pass
 
     def dict_constructor(loader, node):
@@ -53,7 +53,7 @@ def _config_yaml(yaml):
     yaml.add_representer(periods.Instant, lambda dumper, data: dumper.represent_scalar(u'tag:yaml.org,2002:str', str(data)))
     yaml.add_representer(periods.Period, lambda dumper, data: dumper.represent_scalar(u'tag:yaml.org,2002:str', str(data)))
     yaml.add_representer(tuple, lambda dumper, data: dumper.represent_list(data))
-    yaml.add_representer(unicode, lambda dumper, data: dumper.represent_scalar(u'tag:yaml.org,2002:str', data))
+    yaml.add_representer(str, lambda dumper, data: dumper.represent_scalar(u'tag:yaml.org,2002:str', data))
 
     return yaml
 
@@ -142,8 +142,8 @@ def _generate_tests_from_file(tax_benefit_system, path_to_file, options):
         keywords = test.get('keywords', [])
         title = "{}: {}{} - {}".format(
             os.path.basename(path_to_file),
-            u'[{}] '.format(u', '.join(keywords)).encode('utf-8') if keywords else '',
-            name.encode('utf-8'),
+            u'[{}] '.format(u', '.join(keywords)) if keywords else '',
+            name,
             period_str,
             )
 
@@ -176,7 +176,7 @@ def _parse_test_file(tax_benefit_system, yaml_path):
         try:
             tests = yaml.load(yaml_file)
         except yaml.scanner.ScannerError:
-            log.error("{} is not a valid YAML file".format(yaml_path).encode('utf-8'))
+            log.error("{} is not a valid YAML file".format(yaml_path))
             raise
 
     tests, error = conv.pipe(
@@ -207,7 +207,7 @@ def _parse_test_file(tax_benefit_system, yaml_path):
                 tax_benefit_system = current_tax_benefit_system
                 )(test)
         except:
-            log.error("{} is not a valid OpenFisca test file".format(yaml_path).encode('utf-8'))
+            log.error("{} is not a valid OpenFisca test file".format(yaml_path))
             raise
 
         if error is not None:
@@ -217,7 +217,7 @@ def _parse_test_file(tax_benefit_system, yaml_path):
                 yaml_path, error, yaml.dump(test, allow_unicode = True,
                 default_flow_style = False, indent = 2, width = 120)))
 
-        yield yaml_path, test.get('name') or filename, unicode(test['scenario'].period), test
+        yield yaml_path, test.get('name') or filename, str(test['scenario'].period), test
 
 
 def _run_test(period_str, test, verbose = False, only_variables = None, ignore_variables = None, options = {}):

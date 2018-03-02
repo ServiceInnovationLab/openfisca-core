@@ -141,7 +141,7 @@ class Variable(object):
     """
 
     def __init__(self, baseline_variable = None):
-        self.name = unicode(self.__class__.__name__)
+        self.name = str(self.__class__.__name__)
         attr = dict(self.__class__.__dict__)
         self.baseline_variable = baseline_variable
         self.value_type = self.set(attr, 'value_type', required = True, allowed_values = VALUE_TYPES.keys())
@@ -159,11 +159,11 @@ class Variable(object):
             self.default_value = self.set(attr, 'default_value', allowed_type = self.value_type, default = VALUE_TYPES[self.value_type].get('default'))
         self.entity = self.set(attr, 'entity', required = True, setter = self.set_entity)
         self.definition_period = self.set(attr, 'definition_period', required = True, allowed_values = (MONTH, YEAR, ETERNITY))
-        self.label = self.set(attr, 'label', allowed_type = basestring, setter = self.set_label)
-        self.end = self.set(attr, 'end', allowed_type = basestring, setter = self.set_end)
+        self.label = self.set(attr, 'label', allowed_type = str, setter = self.set_label)
+        self.end = self.set(attr, 'end', allowed_type = str, setter = self.set_end)
         self.reference = self.set(attr, 'reference', setter = self.set_reference)
-        self.cerfa_field = self.set(attr, 'cerfa_field', allowed_type = (basestring, dict))
-        self.unit = self.set(attr, 'unit', allowed_type = basestring)
+        self.cerfa_field = self.set(attr, 'cerfa_field', allowed_type = (str, dict))
+        self.unit = self.set(attr, 'unit', allowed_type = str)
         self.set_input = self.set_set_input(attr.pop('set_input', None))
         self.calculate_output = self.set_calculate_output(attr.pop('calculate_output', None))
         self.is_period_size_independent = self.set(attr, 'is_period_size_independent', allowed_type = bool, default = VALUE_TYPES[self.value_type]['is_period_size_independent'])
@@ -176,16 +176,16 @@ class Variable(object):
         if value is None and self.baseline_variable:
             return getattr(self.baseline_variable, attribute_name)
         if required and not value:
-            raise ValueError("Missing attribute '{}' in definition of variable '{}'.".format(attribute_name, self.name).encode('utf-8'))
+            raise ValueError("Missing attribute '{}' in definition of variable '{}'.".format(attribute_name, self.name))
         if allowed_values is not None and value not in allowed_values:
             raise ValueError("Invalid value '{}' for attribute '{}' in variable '{}'. Allowed values are '{}'."
-                .format(value, attribute_name, self.name, allowed_values).encode('utf-8'))
+                .format(value, attribute_name, self.name, allowed_values))
         if allowed_type is not None and value is not None and not isinstance(value, allowed_type):
             if allowed_type == float and isinstance(value, int):
                 value = float(value)
             else:
                 raise ValueError("Invalid value '{}' for attribute '{}' in variable '{}'. Must be of type '{}'."
-                    .format(value, attribute_name, self.name, allowed_type).encode('utf-8'))
+                    .format(value, attribute_name, self.name, allowed_type))
         if setter is not None:
             value = setter(value)
         if value is None and default is not None:
@@ -195,32 +195,32 @@ class Variable(object):
     def set_entity(self, entity):
         if not isinstance(entity, type) or not issubclass(entity, entities.Entity):
             raise ValueError("Invalid value '{}' for attribute 'entity' in variable '{}'. Must be a subclass of Entity."
-            .format(entity, self.name).encode('utf-8'))
+            .format(entity, self.name))
         return entity
 
     def set_possible_values(self, possible_values):
         if not issubclass(possible_values, Enum):
             raise ValueError("Invalid value '{}' for attribute 'possible_values' in variable '{}'. Must be a subclass of {}."
-            .format(possible_values, self.name, Enum).encode('utf-8'))
+            .format(possible_values, self.name, Enum))
         return possible_values
 
     def set_label(self, label):
         if label:
-            if isinstance(label, unicode):
+            if isinstance(label, str):
                 return label
             else:
-                return unicode(label, 'utf-8')
+                return str(label, 'utf-8')
 
     def set_end(self, end):
         if end:
             try:
                 return datetime.datetime.strptime(end, '%Y-%m-%d').date()
             except ValueError:
-                raise ValueError(u"Incorrect 'end' attribute format in '{}'. 'YYYY-MM-DD' expected where YYYY, MM and DD are year, month and day. Found: {}".format(self.name, end).encode('utf-8'))
+                raise ValueError(u"Incorrect 'end' attribute format in '{}'. 'YYYY-MM-DD' expected where YYYY, MM and DD are year, month and day. Found: {}".format(self.name, end))
 
     def set_reference(self, reference):
         if reference:
-            if isinstance(reference, basestring):
+            if isinstance(reference, str):
                 reference = [reference]
             elif isinstance(reference, list):
                 pass
@@ -230,7 +230,7 @@ class Variable(object):
                 raise TypeError('The reference of the variable {} is a {} instead of a String or a List of Strings.'.format(self.name, type(reference)))
 
             for element in reference:
-                if not isinstance(element, basestring):
+                if not isinstance(element, str):
                     raise TypeError(
                         'The reference of the variable {} is a {} instead of a String or a List of Strings.'.format(
                             self.name, type(reference)))

@@ -25,8 +25,8 @@ def assert_near(value, target_value, absolute_error_margin = None, message = '',
         value = np.array(value)
     if isinstance(target_value, (list, tuple)):
         target_value = np.array(target_value)
-    if isinstance(message, unicode):
-        message = message.encode('utf-8')
+    if isinstance(message, str):
+        message = message
     if isinstance(value, np.ndarray):
         if isinstance(target_value, Enum) or (isinstance(target_value, np.ndarray) and target_value.dtype == object):
             if not isinstance(value, EnumArray):

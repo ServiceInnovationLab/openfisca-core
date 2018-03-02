@@ -75,7 +75,7 @@ class ParameterParsingError(Exception):
                 "Error parsing parameter file '{}':".format(file)
                 + os.linesep
                 + message
-                ).encode('utf-8')
+                )
         if traceback is not None:
             message = os.linesep + traceback + os.linesep + message
         super(ParameterParsingError, self).__init__(message)
@@ -131,7 +131,7 @@ class Parameter(object):
             if not INSTANT_PATTERN.match(instant_str):
                 raise ParameterParsingError(
                     "Invalid property '{}' in '{}'. Properties must be valid YYYY-MM-DD instants, such as 2017-01-15."
-                    .format(instant_str, self.name).encode('utf-8'),
+                    .format(instant_str, self.name),
                     file_path)
 
             instant_info = data[instant_str]
@@ -175,7 +175,7 @@ class Parameter(object):
         if period is not None:
             if start is not None or stop is not None:
                 raise TypeError(u"Wrong input for 'update' method: use either 'update(period, value = value)' or 'update(start = start, stop = stop, value = value)'. You cannot both use 'period' and 'start' or 'stop'.")
-            if isinstance(period, basestring):
+            if isinstance(period, str):
                 period = periods.period(period)
             start = period.start
             stop = period.stop
@@ -259,12 +259,12 @@ class ParameterAtInstant(object):
             value = data['value']
         except KeyError:
             raise ParameterParsingError(
-                "Missing 'value' property for {}".format(self.name).encode('utf-8'),
+                "Missing 'value' property for {}".format(self.name),
                 self.file_path
                 )
         if type(value) not in self._allowed_value_data_types:
             raise ParameterParsingError(
-                "Invalid value in {} : {}".format(self.name, value).encode('utf-8'),
+                "Invalid value in {} : {}".format(self.name, value),
                 self.file_path
                 )
 
@@ -272,7 +272,7 @@ class ParameterAtInstant(object):
         return (self.name == other.name) and (self.instant_str == other.instant_str) and (self.value == other.value)
 
     def __repr__(self):
-        return "ParameterAtInstant({})".format({self.instant_str: self.value}).encode('utf-8')
+        return "ParameterAtInstant({})".format({self.instant_str: self.value})
 
 
 class ParameterNode(object):
@@ -375,17 +375,17 @@ class ParameterNode(object):
         :param child: The new child, an instance of :any:`Scale` or :any:`Parameter` or :any:`ParameterNode`.
         """
         if name in self.children:
-            raise ValueError("{} has already a child named {}".format(self.name, name).encode('utf-8'))
+            raise ValueError("{} has already a child named {}".format(self.name, name))
         if not (isinstance(child, ParameterNode) or isinstance(child, Parameter) or isinstance(child, Scale)):
-            raise TypeError("child must be of type ParameterNode, Parameter, or Scale. Instead got {}".format(type(child)).encode('utf-8'))
+            raise TypeError("child must be of type ParameterNode, Parameter, or Scale. Instead got {}".format(type(child)))
         self.children[name] = child
         setattr(self, name, child)
 
     def __repr__(self):
         return os.linesep.join(
             [os.linesep.join(
-                ["{}:", "{}"]).format(name, indent(repr(value))).encode('utf-8')
-                for name, value in self.children.iteritems()]
+                ["{}:", "{}"]).format(name, indent(repr(value)))
+                for name, value in self.children.items()]
             )
 
 
@@ -426,8 +426,8 @@ class ParameterNodeAtInstant(object):
     def __repr__(self):
         return os.linesep.join(
             [os.linesep.join(
-                ["{}:", "{}"]).format(name, indent(repr(value))).encode('utf-8')
-                for name, value in self._children.iteritems()]
+                ["{}:", "{}"]).format(name, indent(repr(value)))
+                for name, value in self._children.items()]
             )
 
 
@@ -477,7 +477,7 @@ class VectorialParameterNodeAtInstant(object):
                 node._name,
                 '.'.join([node_with_key, missing_key]),
                 '.'.join([node_without_key, missing_key]),
-                ).encode('utf-8')
+                )
 
             raise ValueError(message)
 
@@ -491,7 +491,7 @@ class VectorialParameterNodeAtInstant(object):
                 node._name,
                 node_name,
                 non_node_name,
-                ).encode('utf-8')
+                )
 
             raise ValueError(message)
 
@@ -504,7 +504,7 @@ class VectorialParameterNodeAtInstant(object):
                 node._name,
                 node_name,
                 node_type,
-                ).encode('utf-8')
+                )
             raise NotImplementedError(message)
 
         def extract_named_children(node):
@@ -565,7 +565,7 @@ class VectorialParameterNodeAtInstant(object):
 
     def __getitem__(self, key):
         # If the key is a string, just get the subnode
-        if isinstance(key, basestring):
+        if isinstance(key, str):
             return self.__getattr__(key)
         # If the key is a vector, e.g. ['zone_1', 'zone_2', 'zone_1']
         elif isinstance(key, np.ndarray):
@@ -615,7 +615,7 @@ class Scale(object):
         if not isinstance(data['brackets'], list):
             raise ParameterParsingError(
                 "Property 'brackets' of scale '{}' must be of type array."
-                .format(self.name).encode('utf-8'),
+                .format(self.name),
                 self.file_path
                 )
 
@@ -696,7 +696,7 @@ def load_parameter_file(file_path, name = ''):
     """
 
     if not os.path.exists(file_path):
-        raise ValueError("{} doest not exist".format(file_path).encode('utf-8'))
+        raise ValueError("{} doest not exist".format(file_path))
     if os.path.isdir(file_path):
         return ParameterNode(name, directory_path = file_path)
 
@@ -752,7 +752,7 @@ def _validate_parameter(parameter, data, data_type = None, allowed_keys = None):
             if key not in allowed_keys:
                 raise ParameterParsingError(
                     "Unexpected property '{}' in '{}'. Allowed properties are {}."
-                    .format(key, parameter.name, list(allowed_keys)).encode('utf-8'),
+                    .format(key, parameter.name, list(allowed_keys)),
                     parameter.file_path
                     )
 

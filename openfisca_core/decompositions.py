@@ -87,7 +87,7 @@ def make_validate_node_json(tax_benefit_system):
                     ),
                 conv.pipe(
                     conv.condition(
-                        conv.test_isinstance(basestring),
+                        conv.test_isinstance(str),
                         conv.function(lambda code: dict(code = code)),
                         conv.test_isinstance(dict),
                         ),
@@ -102,7 +102,7 @@ def make_validate_node_json(tax_benefit_system):
                                 conv.empty_to_none,
                                 ),
                             code = conv.pipe(
-                                conv.test_isinstance(basestring),
+                                conv.test_isinstance(str),
                                 conv.cleanup_line,
                                 ),
                             ),

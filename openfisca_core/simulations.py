@@ -78,7 +78,7 @@ class Simulation(object):
                 unexpected_entity = unexpected_entities[0]
                 raise SituationParsingError([unexpected_entity],
                     'This entity is not defined in the loaded tax and benefit system. The defined entities are {}.'.format(
-                        ', '.join(allowed_entities)).encode('utf-8')
+                        ', '.join(allowed_entities))
                     )
             persons_json = simulation_json.get(self.tax_benefit_system.person_entity.plural, None)
 
@@ -111,7 +111,7 @@ class Simulation(object):
             log.warn((
                 u"Intermediate results will be stored on disk in {} in case of memory overflow. "
                 u"You should remove this directory once you're done with your simulation."
-                ).format(self._data_storage_dir).encode('utf-8'))
+                ).format(self._data_storage_dir))
         return self._data_storage_dir
 
     @property
@@ -281,7 +281,7 @@ def check_type(input, type, path = []):
     json_type_map = {
         dict: "Object",
         list: "Array",
-        basestring: "String"
+        str: "String"
         }
 
     if not isinstance(input, type):

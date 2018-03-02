@@ -59,11 +59,11 @@ class Instant(tuple):
         >>> str(instant('2014-2-3'))
         '2014-02-03'
 
-        >>> unicode(instant(2014))
+        >>> str(instant(2014))
         u'2014-01-01'
-        >>> unicode(instant('2014-2'))
+        >>> str(instant('2014-2'))
         u'2014-02-01'
-        >>> unicode(instant('2014-2-3'))
+        >>> str(instant('2014-2-3'))
         u'2014-02-03'
         """
         instant_str = str_by_instant_cache.get(self)
@@ -125,7 +125,7 @@ class Instant(tuple):
         """
         assert unit in (u'day', u'month', u'year'), u'Invalid unit: {} of type {}'.format(unit, type(unit))
         assert isinstance(size, int) and size >= 1, u'Invalid size: {} of type {}'.format(size, type(size))
-        return Period((unicode(unit), self, size))
+        return Period((str(unit), self, size))
 
     def offset(self, offset, unit):
         """Increment (or decrement) the given instant with offset units.
@@ -294,26 +294,26 @@ class Period(tuple):
     def __str__(self):
         """Transform period to a string.
 
-        >>> unicode(period(YEAR, 2014))
+        >>> str(period(YEAR, 2014))
         u'2014'
 
-        >>> unicode(period(YEAR, '2014-2'))
+        >>> str(period(YEAR, '2014-2'))
         u'year:2014-02'
-        >>> unicode(period(MONTH, '2014-2'))
+        >>> str(period(MONTH, '2014-2'))
         u'2014-02'
 
-        >>> unicode(period(YEAR, 2012, size = 2))
+        >>> str(period(YEAR, 2012, size = 2))
         u'year:2012:2'
-        >>> unicode(period(MONTH, 2012, size = 2))
+        >>> str(period(MONTH, 2012, size = 2))
         u'month:2012-01:2'
-        >>> unicode(period(MONTH, 2012, size = 12))
+        >>> str(period(MONTH, 2012, size = 12))
         u'2012'
 
-        >>> unicode(period(YEAR, '2012-3', size = 2))
+        >>> str(period(YEAR, '2012-3', size = 2))
         u'year:2012-03:2'
-        >>> unicode(period(MONTH, '2012-3', size = 2))
+        >>> str(period(MONTH, '2012-3', size = 2))
         u'month:2012-03:2'
-        >>> unicode(period(MONTH, '2012-3', size = 12))
+        >>> str(period(MONTH, '2012-3', size = 12))
         u'year:2012-03'
         """
 
@@ -327,7 +327,7 @@ class Period(tuple):
         if (unit == MONTH and size == 12 or unit == YEAR and size == 1):
             if month == 1:
                 # civil year starting from january
-                return unicode(year)
+                return str(year)
             else:
                 # rolling year
                 return u'{}:{}-{:02d}'.format(YEAR, year, month)
@@ -654,7 +654,7 @@ class Period(tuple):
     def to_json_dict(self):
         return collections.OrderedDict((
             ('unit', self[0]),
-            ('start', unicode(self[1])),
+            ('start', str(self[1])),
             ('size', self[2]),
             ))
 
@@ -711,9 +711,9 @@ def instant(instant):
         return None
     if isinstance(instant, Instant):
         return instant
-    if isinstance(instant, basestring):
+    if isinstance(instant, str):
         if not INSTANT_PATTERN.match(instant):
-            raise ValueError("'{}' is not a valid instant. Instants are described using the 'YYYY-MM-DD' format, for instance '2015-06-15'.".format(instant).encode('utf-8'))
+            raise ValueError("'{}' is not a valid instant. Instants are described using the 'YYYY-MM-DD' format, for instance '2015-06-15'.".format(instant))
         instant = Instant(
             int(fragment)
             for fragment in instant.split(u'-', 2)[:3]
@@ -785,7 +785,7 @@ def period(value):
 
     def raise_error(value):
         message = linesep.join([
-            u"Expected a period (eg. '2017', '2017-01', ...); got: '{}'.".format(value).encode('utf-8'),
+            u"Expected a period (eg. '2017', '2017-01', ...); got: '{}'.".format(value),
             u"Learn more about legal period formats in OpenFisca:",
             u"<http://openfisca.org/doc/periodsinstants.html#api>."
             ])
@@ -797,7 +797,7 @@ def period(value):
     # check the type
     if isinstance(value, int):
         return Period((YEAR, Instant((value, 1, 1)), 1))
-    if not isinstance(value, basestring):
+    if not isinstance(value, str):
         raise_error(value)
 
     # try to parse as a simple period
@@ -1046,7 +1046,7 @@ def json_or_python_to_instant_tuple(value, state = None):
     if state is None:
         state = conv.default_state
 
-    if isinstance(value, basestring):
+    if isinstance(value, str):
         if year_or_month_or_day_re.match(value) is None:
             return value, state._(u'Invalid date string')
         instant = tuple(

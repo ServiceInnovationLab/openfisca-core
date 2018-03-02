@@ -20,6 +20,6 @@ def stringify_array(array):
     """Generate a clean string representation of a NumPY array.
     """
     return u'[{}]'.format(u', '.join(
-        unicode(cell)
+        str(cell)
         for cell in array
         )) if array is not None else u'None'

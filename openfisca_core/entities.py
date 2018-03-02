@@ -84,7 +84,7 @@ class Entity(object):
                     array = holder.buffer.get(period)
                     if array is None:
                         array = holder.default_array()
-                    if holder.variable.value_type == Enum and isinstance(value, basestring):
+                    if holder.variable.value_type == Enum and isinstance(value, str):
                         try:
                             value = holder.variable.possible_values[value].index
                         except KeyError:
@@ -189,7 +189,7 @@ You requested computation of variable "{}", but you did not specify on which per
 When you request the computation of a variable within a formula, you must always specify the period as the second parameter. The convention is to call this parameter "period". For example:
     computed_salary = person('salary', period).
 See more information at <http://openfisca.org/doc/coding-the-legislation/35_periods.html#periods-for-variable>.
-'''.format(variable_name, filename, line_number, line_of_code).encode('utf-8'))
+'''.format(variable_name, filename, line_number, line_of_code))
 
     def __call__(self, variable_name, period = None, options = [], **parameters):
         self.check_variable_defined_for_entity(variable_name)
@@ -197,7 +197,7 @@ See more information at <http://openfisca.org/doc/coding-the-legislation/35_peri
         self.check_period_validity(variable_name, period)
 
         if ADD in options and DIVIDE in options:
-            raise ValueError(u'Options ADD and DIVIDE are incompatible (trying to compute variable {})'.format(variable_name).encode('utf-8'))
+            raise ValueError(u'Options ADD and DIVIDE are incompatible (trying to compute variable {})'.format(variable_name))
         elif ADD in options:
             return self.simulation.calculate_add(variable_name, period, **parameters)
         elif DIVIDE in options:
@@ -388,7 +388,7 @@ class GroupEntity(Entity):
         for role_id, role_definition in roles_json.iteritems():
             check_type(role_definition, list, [self.plural, entity_id, role_id])
             for index, person_id in enumerate(role_definition):
-                check_type(person_id, basestring, [self.plural, entity_id, role_id, str(index)])
+                check_type(person_id, str, [self.plural, entity_id, role_id, str(index)])
                 if person_id not in self.simulation.persons.ids:
                     raise SituationParsingError([self.plural, entity_id, role_id],
                         u"Unexpected value: {0}. {0} has been declared in {1} {2}, but has not been declared in {3}.".format(

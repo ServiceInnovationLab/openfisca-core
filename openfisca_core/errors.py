@@ -26,4 +26,4 @@ class VariableNotFound(Exception):
             u"Look at its changelog to learn about renames and removals and update your code. If it is an official package,",
             u"it is probably available on <https://github.com/openfisca/{0}/blob/master/CHANGELOG.md>.".format(country_package_name)
             ])
-        Exception.__init__(self, message.encode('utf-8'))
+        Exception.__init__(self, message)
