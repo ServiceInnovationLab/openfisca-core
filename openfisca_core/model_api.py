@@ -11,8 +11,8 @@ from numpy import (   # noqa analysis:ignore
     where,
 )
 
-from .indexed_enums import Enum  # noqa analysis:ignore
-from .formulas import (  # noqa analysis:ignore
+from openfisca_core.indexed_enums import Enum  # noqa analysis:ignore
+from openfisca_core.formulas import (  # noqa analysis:ignore
     ADD,
     calculate_output_add,
     calculate_output_divide,
@@ -20,15 +20,15 @@ from .formulas import (  # noqa analysis:ignore
     set_input_dispatch_by_period,
     set_input_divide_by_period,
     )
-from .base_functions import (   # noqa analysis:ignore
+from openfisca_core.base_functions import (   # noqa analysis:ignore
     missing_value,
     requested_period_added_value,
     requested_period_default_value,
     requested_period_last_or_next_value,
     requested_period_last_value,
     )
-from .variables import Variable  # noqa analysis:ignore
-from .formula_helpers import apply_thresholds, concat, switch  # noqa analysis:ignore
-from .periods import MONTH, YEAR, ETERNITY, period  # noqa analysis:ignore
-from .reforms import Reform  # noqa analysis:ignore
-from .parameters import load_parameter_file, ParameterNode, Scale, Bracket, Parameter, ValuesHistory  # noqa analysis:ignore
+from openfisca_core.variables import Variable  # noqa analysis:ignore
+from openfisca_core.formula_helpers import apply_thresholds, concat, switch  # noqa analysis:ignore
+from openfisca_core.periods import MONTH, YEAR, ETERNITY, period  # noqa analysis:ignore
+from openfisca_core.reforms import Reform  # noqa analysis:ignore
+from openfisca_core.parameters import load_parameter_file, ParameterNode, Scale, Bracket, Parameter, ValuesHistory  # noqa analysis:ignore

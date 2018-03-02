@@ -2,7 +2,7 @@
 
 import warnings
 
-from . import periods
+from openfisca_core import periods
 
 
 def permanent_default_value(formula, simulation, period, *extra_params):

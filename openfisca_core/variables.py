@@ -6,20 +6,22 @@ import textwrap
 import datetime
 
 import numpy as np
+from datetime import date
 
-import entities
-from formulas import Formula
-import periods
-from periods import MONTH, YEAR, ETERNITY
-from base_functions import (
+import openfisca_core.entities as entities
+from openfisca_core.indexed_enums import Enum, EnumArray
+from openfisca_core.formulas import Formula
+import openfisca_core.periods as periods
+from openfisca_core.periods import MONTH, YEAR, ETERNITY
+from openfisca_core.base_functions import (
     missing_value,
     permanent_default_value,
     requested_period_default_value,
     requested_period_last_or_next_value,
     requested_period_last_value,
     )
-from datetime import date
-from indexed_enums import Enum, EnumArray
+
+
 
 VALUE_TYPES = {
     bool: {

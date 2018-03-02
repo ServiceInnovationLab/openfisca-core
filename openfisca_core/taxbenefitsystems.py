@@ -12,12 +12,12 @@ import pkg_resources
 import traceback
 from setuptools import find_packages
 
-import conv
-from parameters import ParameterNode
-from variables import Variable
-from scenarios import AbstractScenario
-from formulas import get_neutralized_variable
-from errors import VariableNotFound
+import openfisca_core.conv as conv
+from openfisca_core.parameters import ParameterNode
+from openfisca_core.variables import Variable
+from openfisca_core.scenarios import AbstractScenario
+from openfisca_core.formulas import get_neutralized_variable
+from openfisca_core.errors import VariableNotFound
 
 log = logging.getLogger(__name__)
 

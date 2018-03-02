@@ -5,9 +5,9 @@ import os
 
 import numpy as np
 
-import periods
-from periods import ETERNITY
-from indexed_enums import EnumArray
+import openfisca_core.periods as periods
+from openfisca_core.periods import ETERNITY
+from openfisca_core.indexed_enums import EnumArray
 
 
 class InMemoryStorage(object):

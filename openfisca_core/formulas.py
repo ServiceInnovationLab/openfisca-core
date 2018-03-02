@@ -13,11 +13,11 @@ from os import linesep
 
 import numpy as np
 
-from . import holders, periods
-from .parameters import ParameterNotFound
-from .periods import MONTH, YEAR, ETERNITY
-from .commons import empty_clone, stringify_array
-from .indexed_enums import Enum, EnumArray
+from openfisca_core import holders, periods
+from openfisca_core.parameters import ParameterNotFound
+from openfisca_core.periods import MONTH, YEAR, ETERNITY
+from openfisca_core.commons import empty_clone, stringify_array
+from openfisca_core.indexed_enums import Enum, EnumArray
 
 
 log = logging.getLogger(__name__)

@@ -6,8 +6,8 @@ import re
 
 import numpy as np
 
-from indexed_enums import Enum
-from . import conv, periods
+from openfisca_core.indexed_enums import Enum
+from openfisca_core import conv, periods
 
 """
 Columns are the ancestors of Variables, and are now considered deprecated. Preferably use `Variable` instead.
