@@ -370,6 +370,6 @@ class TaxBenefitSystem(object):
         else:
             return {
                 variable_name: variable
-                for variable_name, variable in self.variables.iteritems()
+                for variable_name, variable in self.variables.items()
                 if variable.entity == entity
                 }

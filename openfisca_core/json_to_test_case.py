@@ -40,7 +40,7 @@ def check_entity_fields(entity_json, entity_class, valid_roles, tax_benefit_syst
             raise ValueError(u"Invalid value {} for variable {}. Error: {}".format(value, key, error))
         entity_json[key] = value
 
-    for key, value in entity_json.iteritems():
+    for key, value in entity_json.items():
         if key == 'id':
             check_id(value)
         elif valid_roles.get(key) is not None:
@@ -69,7 +69,7 @@ def check_entities_and_role(test_case, tax_benefit_system, state):
 
     test_case = deepcopy(test_case)  # Avoid side-effects on other references to test_case
     entity_classes = {entity_class.plural: entity_class for entity_class in tax_benefit_system.entities}
-    for entity_type_name, entities in test_case.iteritems():
+    for entity_type_name, entities in test_case.items():
         if entity_classes.get(entity_type_name) is None:
             raise ValueError(u"Invalid entity name: {}".format(entity_type_name))
         entities, error = conv.pipe(

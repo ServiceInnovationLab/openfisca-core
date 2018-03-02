@@ -124,7 +124,7 @@ class Holder(object):
         new = empty_clone(self)
         new_dict = new.__dict__
 
-        for key, value in self.__dict__.iteritems():
+        for key, value in self.__dict__.items():
             if key in ('_array_by_period',):
                 if value is not None:
                     # There is no need to copy the arrays, because the formulas don't modify them.
@@ -434,10 +434,10 @@ class Holder(object):
                 for cell in array.tolist()
                 ]
         value_json = {}
-        for period, array_or_dict in self._memory_storage._arrays.iteritems():
+        for period, array_or_dict in self._memory_storage._arrays.items():
             if type(array_or_dict) == dict:
                 values_dict = {}
-                for extra_params, array in array_or_dict.iteritems():
+                for extra_params, array in array_or_dict.items():
                     extra_params_key = extra_params_to_json_key(extra_params, period)
                     values_dict[str(extra_params_key)] = [
                         transform_dated_value_to_json(cell, use_label = use_label)
@@ -450,10 +450,10 @@ class Holder(object):
                     for cell in array_or_dict.tolist()
                     ]
         if self._disk_storage:
-            for period, file_or_dict in self._disk_storage._files.iteritems():
+            for period, file_or_dict in self._disk_storage._files.items():
                 if type(file_or_dict) == dict:
                     values_dict = {}
-                    for extra_params, file in file_or_dict.iteritems():
+                    for extra_params, file in file_or_dict.items():
                         extra_params_key = extra_params_to_json_key(extra_params, period)
                         values_dict[str(extra_params_key)] = [
                             transform_dated_value_to_json(cell, use_label = use_label)

@@ -75,7 +75,7 @@ class Formula(object):
         formula_class_attributes['__module__'] = attributes.pop('__module__', None)
 
         dated_formulas_class = []
-        for function_name, function in attributes.copy().iteritems():
+        for function_name, function in attributes.copy().items():
             # Turn any formula into a dated formula
             formula_start_date = deduce_formula_date_from_name(function_name)
             if not formula_start_date:
@@ -139,7 +139,7 @@ class Formula(object):
         keys_to_skip.add('dated_formulas')
         keys_to_skip.add('holder')
 
-        for key, value in self.__dict__.iteritems():
+        for key, value in self.__dict__.items():
             if key not in keys_to_skip:
                 new_dict[key] = value
         new_dict['holder'] = holder
@@ -148,7 +148,7 @@ class Formula(object):
             new.dated_formulas = [
                 {
                     key: value.clone(holder) if key == 'formula' else value
-                    for key, value in dated_formula.iteritems()
+                    for key, value in dated_formula.items()
                     }
                 for dated_formula in self.dated_formulas
                 ]
@@ -403,7 +403,7 @@ class Formula(object):
                 period,
                 u', '.join(sorted(set(
                     u'{}<{}>'.format(variable_name, period2)
-                    for variable_name, periods in requested_periods_by_variable_name.iteritems()
+                    for variable_name, periods in requested_periods_by_variable_name.items()
                     for period2 in periods
                     ))),
                 )

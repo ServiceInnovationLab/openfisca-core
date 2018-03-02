@@ -510,7 +510,7 @@ class VectorialParameterNodeAtInstant(object):
         def extract_named_children(node):
             return {
                 '.'.join([node._name, key]): value
-                for key, value in node._children.iteritems()
+                for key, value in node._children.items()
                 }
 
         def check_nodes_homogeneous(named_nodes):

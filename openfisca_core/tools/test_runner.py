@@ -39,11 +39,11 @@ def _config_yaml(yaml):
 
     yaml.add_representer(collections.OrderedDict, lambda dumper, data: dumper.represent_dict(
         (copy.deepcopy(key), value)
-        for key, value in data.iteritems()
+        for key, value in data.items()
         ))
     yaml.add_representer(dict, lambda dumper, data: dumper.represent_dict(
         (copy.deepcopy(key), value)
-        for key, value in data.iteritems()
+        for key, value in data.items()
         ))
     yaml.add_representer(folded_unicode, lambda dumper, data: dumper.represent_scalar(u'tag:yaml.org,2002:str',
         data, style='>'))
@@ -234,13 +234,13 @@ def _run_test(period_str, test, verbose = False, only_variables = None, ignore_v
     output_variables = test.get(u'output_variables')
     if output_variables is not None:
         try:
-            for variable_name, expected_value in output_variables.iteritems():
+            for variable_name, expected_value in output_variables.items():
                 variable_ignored = ignore_variables is not None and variable_name in ignore_variables
                 variable_not_tested = only_variables is not None and variable_name not in only_variables
                 if variable_ignored or variable_not_tested:
                     continue  # Skip this variable
                 if isinstance(expected_value, dict):
-                    for requested_period, expected_value_at_period in expected_value.iteritems():
+                    for requested_period, expected_value_at_period in expected_value.items():
                         assert_near(
                             simulation.calculate(variable_name, requested_period),
                             expected_value_at_period,

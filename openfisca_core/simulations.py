@@ -149,7 +149,7 @@ class Simulation(object):
         new = empty_clone(self)
         new_dict = new.__dict__
 
-        for key, value in self.__dict__.iteritems():
+        for key, value in self.__dict__.items():
             if key not in ('debug', 'trace', 'tracer'):
                 new_dict[key] = value
 

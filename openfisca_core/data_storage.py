@@ -56,7 +56,7 @@ class InMemoryStorage(object):
 
         self._arrays = {
             period_item: value
-            for period_item, value in self._arrays.iteritems()
+            for period_item, value in self._arrays.items()
             if not period.contains(period_item)
             }
 
@@ -153,7 +153,7 @@ class OnDiskStorage(object):
         if period is not None:
             self._files = {
                 period_item: value
-                for period_item, value in self._files.iteritems()
+                for period_item, value in self._files.items()
                 if not period.contains(period_item)
                 }
 
