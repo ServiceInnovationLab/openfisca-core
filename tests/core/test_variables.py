@@ -38,9 +38,9 @@ def vectorize(function, number):
 def check_error_at_add_variable(tax_benefit_system, variable, error_message_prefix):
     try:
         tax_benefit_system.add_variable(variable)
-    except AssertionError, e:
+    except AssertionError as e:
         if not e.message or not e.message.startswith(error_message_prefix):
-            raise AssertionError('Incorrect error message. Was expecting something starting by "{}". Got: "{}"'.format(error_message_prefix, e.message).encode('utf-8'))
+            raise AssertionError('Incorrect error message. Was expecting something starting by "{}". Got: "{}"'.format(error_message_prefix, e.message))
 
 
 # TESTS
@@ -59,7 +59,7 @@ class variable__no_date(Variable):
 def test_before_add__variable__no_date():
     try:
         tax_benefit_system.variables['variable__no_date']
-    except KeyError, e:
+    except KeyError as e:
         assert e.message == 'variable__no_date'
     except:
         raise
@@ -86,7 +86,7 @@ def test_variable__strange_end_attribute():
     try:
         tax_benefit_system.add_variable(variable__strange_end_attribute)
 
-    except ValueError, e:
+    except ValueError as e:
         if e.message:
             assert e.message.startswith("Incorrect 'end' attribute format in 'variable__strange_end_attribute'."), e.message
     except:
