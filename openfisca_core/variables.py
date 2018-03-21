@@ -22,7 +22,6 @@ from openfisca_core.base_functions import (
     )
 
 
-
 VALUE_TYPES = {
     bool: {
         'dtype': np.bool,

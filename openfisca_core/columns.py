@@ -280,9 +280,9 @@ class StrCol(Column):
             conv.condition(
                 conv.test_isinstance((float, int)),
                 # YAML stores strings containing only digits as numbers.
-                conv.function(unicode),
+                conv.function(str),
                 ),
-            conv.test_isinstance(unicode),
+            conv.test_isinstance(str),
             )
 
 
