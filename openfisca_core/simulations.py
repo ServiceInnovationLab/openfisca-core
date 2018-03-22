@@ -124,7 +124,7 @@ class Simulation(object):
             )
 
         result = {}
-        for entity in self.entities.itervalues():
+        for entity in iter(self.entities.values()):
             result.update(entity._holders)
         return result
 
@@ -270,7 +270,7 @@ class Simulation(object):
             total_nb_bytes = 0,
             by_variable = {}
             )
-        for entity in self.entities.itervalues():
+        for entity in iter(self.entities.values()):
             entity_memory_usage = entity.get_memory_usage(variables = variables)
             result['total_nb_bytes'] += entity_memory_usage['total_nb_bytes']
             result['by_variable'].update(entity_memory_usage['by_variable'])

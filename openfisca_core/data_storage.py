@@ -73,7 +73,7 @@ class InMemoryStorage(object):
 
         nb_arrays = sum([
             len(array_or_dict) if isinstance(array_or_dict, dict) else 1
-            for array_or_dict in self._arrays.itervalues()
+            for array_or_dict in iter(self._arrays.values())
             ])
 
         array = self._arrays.values()[0]

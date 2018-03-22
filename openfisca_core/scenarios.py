@@ -62,7 +62,7 @@ class AbstractScenario(object):
                 persons.count = 1
                 persons.ids = range(persons.count)
 
-            for entity in simulation.entities.itervalues():
+            for entity in iter(simulation.entities.values()):
                 if entity is persons:
                     continue
 
@@ -102,7 +102,7 @@ class AbstractScenario(object):
                     holder = simulation.get_variable_entity(variable_name).get_holder(variable_name)
                     holder.set_input(period, value)
 
-            for entity in simulation.entities.itervalues():
+            for entity in iter(simulation.entities.values()):
                 step_size = len(test_case[entity.plural])
                 count = steps_count * step_size
                 entity.count = count
@@ -116,7 +116,7 @@ class AbstractScenario(object):
                 for person_index, person in enumerate(test_case[persons.plural])
                 )
 
-            for entity in simulation.entities.itervalues():
+            for entity in iter(simulation.entities.values()):
 
                 used_columns_name = set(
                     key
@@ -161,7 +161,7 @@ class AbstractScenario(object):
                                 for entity_member in test_case[entity.plural]
                                 ):
                             if isinstance(cell, dict):
-                                if any(value is not None for value in cell.itervalues()):
+                                if any(value is not None for value in iter(cell.values())):
                                     variable_periods.update(cell.iterkeys())
                             elif cell is not None:
                                 variable_periods.add(simulation_period)
@@ -683,7 +683,7 @@ def make_json_or_python_to_test(tax_benefit_system):
         period = test_case.pop(u'period')
         relative_error_margin = test_case.pop(u'relative_error_margin')
 
-        if test_case is not None and all(entity_members is None for entity_members in test_case.itervalues()):
+        if test_case is not None and all(entity_members is None for entity_members in iter(test_case.values())):
             test_case = None
 
         scenario, error = tax_benefit_system.Scenario.make_json_to_instance(repair = True,

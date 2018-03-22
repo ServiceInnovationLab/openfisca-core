@@ -152,7 +152,7 @@ def create_app(tax_benefit_system,
 
         return jsonify({
             "trace": trace,
-            "entitiesDescription": {entity.plural: entity.ids for entity in simulation.entities.itervalues()},
+            "entitiesDescription": {entity.plural: entity.ids for entity in iter(simulation.entities.values())},
             "requestedCalculations": list(simulation.tracer.requested_calculations)
             })
 

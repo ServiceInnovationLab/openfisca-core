@@ -237,7 +237,7 @@ See more information at <http://openfisca.org/doc/coding-the-legislation/35_peri
             }
 
         total_memory_usage = sum(
-            holder_memory_usage['total_nb_bytes'] for holder_memory_usage in holders_memory_usage.itervalues()
+            holder_memory_usage['total_nb_bytes'] for holder_memory_usage in iter(holders_memory_usage.values())
             )
 
         return dict(

@@ -52,7 +52,7 @@ def check_entity_fields(entity_json, entity_class, valid_roles, tax_benefit_syst
             from .taxbenefitsystems import VariableNotFound
             raise VariableNotFound(key, tax_benefit_system)
 
-    for role in valid_roles.itervalues():
+    for role in iter(valid_roles.values()):
         if role.max != 1 and entity_json.get(role.plural) is None:  # by convention, if no one in the entity has a given non-unique role, it should be [] in the JSON
             entity_json[role.plural] = []
 
@@ -94,7 +94,7 @@ def check_entities_and_role(test_case, tax_benefit_system, state):
         for entity_json in entities:
             check_entity_fields(entity_json, entity_class, valid_roles, tax_benefit_system)
 
-    for entity_class in entity_classes.itervalues():
+    for entity_class in iter(entity_classes.values()):
         if test_case.get(entity_class.plural) is None:
             test_case[entity_class.plural] = []  # by convention, all entities must be declared in the test_case
 
