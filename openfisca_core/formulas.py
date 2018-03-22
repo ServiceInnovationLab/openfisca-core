@@ -553,13 +553,13 @@ class Formula(object):
         """
         function = self.find_function(period)
 
-        if function.im_func.func_code.co_varnames[0] == 'self':
+        if 'self' in [param.name for param in inspect.signature(function).parameters.values()]:
             return function(simulation, period, *extra_params)
         else:
             entity = self.holder.entity
-            function = function.im_func
+            function = function.__func__
             parameters_at = simulation.parameters_at
-            if function.func_code.co_argcount == 2:
+            if len(inspect.signature(function).parameters) == 2:
                 return function(entity, period)
             else:
                 return function(entity, period, parameters_at, *extra_params)
