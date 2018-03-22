@@ -44,7 +44,7 @@ def read_user_configuration(default_configuration, command_line_parser):
 
     if args.configuration_file:
         file_configuration = {}
-        execfile(args.configuration_file, {}, file_configuration)
+        exec(open(args.configuration_file, {}, file_configuration).read())
 
         # Configuration file overloads default configuration
         update(configuration, file_configuration)
