@@ -852,16 +852,16 @@ def compare_period_size(a, b):
             ETERNITY: 3,
             }
 
-        return cmp(unit_weights[unit_a], unit_weights[unit_b])
+        return (unit_weights[unit_a] > unit_weights[unit_b]) - (unit_weights[unit_a] < unit_weights[unit_b])
 
-    return cmp(size_a, size_b)
+    return (size_a > size_b) - (size_a < size_b)
 
 
 def compare_period_start(a, b):
     unit_a, start_a, size_a = a
     unit_b, start_b, size_b = b
 
-    return cmp(start_a, start_b)
+    return (start_a > start_b) - (start_a < start_b)
 
 
 # Level-1 converters
