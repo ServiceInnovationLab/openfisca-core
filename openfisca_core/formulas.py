@@ -552,8 +552,10 @@ class Formula(object):
         Retro-compatibility-layer: handles old syntax (with `self` as first argument).
         """
         function = self.find_function(period)
+        source = inspect.getsource(function)
+        first_line = source.split('\n', 1)[0]
 
-        if 'self' in [param.name for param in inspect.signature(function).parameters.values()]:
+        if '(self,' in first_line:
             return function(simulation, period, *extra_params)
         else:
             entity = self.holder.entity
