@@ -145,7 +145,7 @@ class Variable(object):
             unicode
             self.name = unicode(self.__class__.__name__)
         except NameError:
-            self.name = unicode(self.__class__.__name__)
+            self.name = str(self.__class__.__name__)
         attr = dict(self.__class__.__dict__)
         self.baseline_variable = baseline_variable
         self.value_type = self.set(attr, 'value_type', required = True, allowed_values = VALUE_TYPES.keys())
