@@ -80,7 +80,13 @@ def embed_error(value, error_key, error):
                 if child_error is not None:
                     return error
             return None
-        if all(isinstance(key, str) and key.isdigit() and 0 <= int(key) < len(value) for key in error):
+        try:  # Compatibility python 2 and Python 3
+            basestring
+            text_type = basestring
+        except NameError:
+            text_type = str
+
+        if all(isinstance(key, text_type) and key.isdigit() and 0 <= int(key) < len(value) for key in error):
             for child_key, child_error in error.items():
                 child_error = embed_error(value[int(child_key)], error_key, child_error)
                 if child_error is not None:

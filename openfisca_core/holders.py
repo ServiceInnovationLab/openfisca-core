@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-from __future__ import division
+from __future__ import division, unicode_literals
 import logging
 import os
 import warnings
@@ -74,8 +74,8 @@ class Holder(object):
         assert self.variable is None
         if simulation is not None:
             warnings.warn(
-                u"The Holder(simulation, variable) constructor has been deprecated. "
-                u"Please use Holder(entity = entity, variable = variable) instead.",
+                "The Holder(simulation, variable) constructor has been deprecated. "
+                "Please use Holder(entity = entity, variable = variable) instead.",
                 Warning
                 )
             self.simulation = simulation
@@ -153,17 +153,17 @@ class Holder(object):
         # Check that the requested period matches definition_period
         if variable.definition_period != ETERNITY:
             if variable.definition_period == MONTH and period.unit != periods.MONTH:
-                raise ValueError(u'Unable to compute variable {0} for period {1} : {0} must be computed for a whole month. You can use the ADD option to sum {0} over the requested period, or change the requested period to "period.first_month".'.format(
+                raise ValueError('Unable to compute variable {0} for period {1} : {0} must be computed for a whole month. You can use the ADD option to sum {0} over the requested period, or change the requested period to "period.first_month".'.format(
                     variable.name,
                     period
                     ))
             if variable.definition_period == YEAR and period.unit != periods.YEAR:
-                raise ValueError(u'Unable to compute variable {0} for period {1} : {0} must be computed for a whole year. You can use the DIVIDE option to get an estimate of {0} by dividing the yearly value by 12, or change the requested period to "period.this_year".'.format(
+                raise ValueError('Unable to compute variable {0} for period {1} : {0} must be computed for a whole year. You can use the DIVIDE option to get an estimate of {0} by dividing the yearly value by 12, or change the requested period to "period.this_year".'.format(
                     variable.name,
                     period
                     ))
             if period.size != 1:
-                raise ValueError(u'Unable to compute variable {0} for period {1} : {0} must be computed for a whole {2}. You can use the ADD option to sum {0} over the requested period.'.format(
+                raise ValueError('Unable to compute variable {0} for period {1} : {0} must be computed for a whole {2}. You can use the ADD option to sum {0} over the requested period.'.format(
                     variable.name,
                     period,
                     'month' if variable.definition_period == MONTH else 'year'))
@@ -189,7 +189,7 @@ class Holder(object):
     def compute_add(self, period, **parameters):
         # Check that the requested period matches definition_period
         if self.variable.definition_period == YEAR and period.unit == periods.MONTH:
-            raise ValueError(u'Unable to compute variable {0} for period {1} : {0} can only be computed for year-long periods. You can use the DIVIDE option to get an estimate of {0} by dividing the yearly value by 12, or change the requested period to "period.this_year".'.format(
+            raise ValueError('Unable to compute variable {0} for period {1} : {0} can only be computed for year-long periods. You can use the DIVIDE option to get an estimate of {0} by dividing the yearly value by 12, or change the requested period to "period.this_year".'.format(
                 self.variable.name,
                 period,
                 ))
@@ -199,7 +199,7 @@ class Holder(object):
         elif self.variable.definition_period == YEAR:
             variable_definition_period = periods.YEAR
         else:
-            raise ValueError(u'Unable to sum constant variable {} over period {} : only variables defined monthly or yearly can be summed over time.'.format(
+            raise ValueError('Unable to sum constant variable {} over period {} : only variables defined monthly or yearly can be summed over time.'.format(
                 self.variable.name,
                 period))
 
@@ -219,7 +219,7 @@ class Holder(object):
     def compute_divide(self, period, **parameters):
         # Check that the requested period matches definition_period
         if self.variable.definition_period != YEAR:
-            raise ValueError(u'Unable to divide the value of {} over time (on period {}) : only variables defined yearly can be divided over time.'.format(
+            raise ValueError('Unable to divide the value of {} over time (on period {}) : only variables defined yearly can be divided over time.'.format(
                 self.variable.name,
                 period))
 
@@ -234,7 +234,7 @@ class Holder(object):
         elif period.unit == periods.YEAR:
             return self.compute(period, **parameters)
 
-        raise ValueError(u'Unable to divide the value of {} to match the period {}.'.format(
+        raise ValueError('Unable to divide the value of {} to match the period {}.'.format(
             self.variable.name,
             period))
 
@@ -332,8 +332,8 @@ class Holder(object):
     def set_input(self, period, array):
         if period.unit == ETERNITY and self.variable.definition_period != ETERNITY:
             error_message = os.linesep.join([
-                u'Unable to set a value for variable {0} for ETERNITY.',
-                u'{0} is only defined for {1}s. Please adapt your input.',
+                'Unable to set a value for variable {0} for ETERNITY.',
+                '{0} is only defined for {1}s. Please adapt your input.',
                 ]).format(
                     self.variable.name,
                     self.variable.definition_period
@@ -358,7 +358,7 @@ class Holder(object):
                 value = value.astype(self.variable.dtype)
             except ValueError:
                 raise ValueError(
-                    u'Unable to set value "{}" for variable "{}", as the variable dtype "{}" does not match the value dtype "{}".'
+                    'Unable to set value "{}" for variable "{}", as the variable dtype "{}" does not match the value dtype "{}".'
                     .format(value, self.variable.name, self.variable.dtype, value.dtype)
                     )
 
@@ -368,9 +368,9 @@ class Holder(object):
             if ((self.variable.definition_period == MONTH and period.unit != periods.MONTH) or
                (self.variable.definition_period == YEAR and period.unit != periods.YEAR)):
                 error_message = os.linesep.join([
-                    u'Unable to set a value for variable {0} for {1}-long period {2}.',
-                    u'{0} is only defined for {3}s. Please adapt your input.',
-                    u'If you are the maintainer of {0}, you can consider adding it a set_input attribute to enable automatic period casting.'
+                    'Unable to set a value for variable {0} for {1}-long period {2}.',
+                    '{0} is only defined for {3}s. Please adapt your input.',
+                    'If you are the maintainer of {0}, you can consider adding it a set_input attribute to enable automatic period casting.'
                     ]).format(
                         self.variable.name,
                         period.unit,

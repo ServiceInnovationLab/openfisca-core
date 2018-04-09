@@ -4,6 +4,8 @@
 A module to run openfisca yaml tests
 """
 
+from __future__ import unicode_literals
+
 import collections
 import copy
 import glob
@@ -21,15 +23,21 @@ from openfisca_core.tools import assert_near
 
 log = logging.getLogger(__name__)
 
+# Depending on python 2 or python 3
+try:
+    text_type = unicode
+except NameError:
+    text_type = str
+
 # Yaml module configuration
 
 
 def _config_yaml(yaml):
 
-    class folded_unicode(str):
+    class folded_unicode(text_type):
         pass
 
-    class literal_unicode(str):
+    class literal_unicode(text_type):
         pass
 
     def dict_constructor(loader, node):
@@ -45,15 +53,15 @@ def _config_yaml(yaml):
         (copy.deepcopy(key), value)
         for key, value in data.items()
         ))
-    yaml.add_representer(folded_unicode, lambda dumper, data: dumper.represent_scalar(u'tag:yaml.org,2002:str',
+    yaml.add_representer(folded_unicode, lambda dumper, data: dumper.represent_scalar('tag:yaml.org,2002:str',
         data, style='>'))
-    yaml.add_representer(literal_unicode, lambda dumper, data: dumper.represent_scalar(u'tag:yaml.org,2002:str',
+    yaml.add_representer(literal_unicode, lambda dumper, data: dumper.represent_scalar('tag:yaml.org,2002:str',
         data, style='|'))
     yaml.add_representer(np.ndarray, lambda dumper, data: dumper.represent_list(data.tolist()))
-    yaml.add_representer(periods.Instant, lambda dumper, data: dumper.represent_scalar(u'tag:yaml.org,2002:str', str(data)))
-    yaml.add_representer(periods.Period, lambda dumper, data: dumper.represent_scalar(u'tag:yaml.org,2002:str', str(data)))
+    yaml.add_representer(periods.Instant, lambda dumper, data: dumper.represent_scalar('tag:yaml.org,2002:str', str(data)))
+    yaml.add_representer(periods.Period, lambda dumper, data: dumper.represent_scalar('tag:yaml.org,2002:str', str(data)))
     yaml.add_representer(tuple, lambda dumper, data: dumper.represent_list(data))
-    yaml.add_representer(str, lambda dumper, data: dumper.represent_scalar(u'tag:yaml.org,2002:str', data))
+    yaml.add_representer(text_type, lambda dumper, data: dumper.represent_scalar('tag:yaml.org,2002:str', data))
 
     return yaml
 
@@ -135,14 +143,14 @@ def _generate_tests_from_file(tax_benefit_system, path_to_file, options):
 
     for test_index, (path_to_file, name, period_str, test) in enumerate(tests, 1):
         if name_filter is not None and name_filter not in filename \
-                and name_filter not in (test.get('name', u'')) \
+                and name_filter not in (test.get('name', '')) \
                 and name_filter not in (test.get('keywords', [])):
             continue
 
         keywords = test.get('keywords', [])
         title = "{}: {}{} - {}".format(
             os.path.basename(path_to_file),
-            u'[{}] '.format(u', '.join(keywords)) if keywords else '',
+            '[{}] '.format(', '.join(keywords)) if keywords else '',
             name,
             period_str,
             )
@@ -188,7 +196,7 @@ def _parse_test_file(tax_benefit_system, yaml_path):
         )(tests)
 
     if error is not None:
-        embedding_error = conv.embed_error(tests, u'errors', error)
+        embedding_error = conv.embed_error(tests, 'errors', error)
         assert embedding_error is None, embedding_error
         raise ValueError("Error in test {}:\n{}".format(yaml_path, yaml.dump(tests, allow_unicode = True,
             default_flow_style = False, indent = 2, width = 120)))
@@ -211,13 +219,13 @@ def _parse_test_file(tax_benefit_system, yaml_path):
             raise
 
         if error is not None:
-            embedding_error = conv.embed_error(test, u'errors', error)
+            embedding_error = conv.embed_error(test, 'errors', error)
             assert embedding_error is None, embedding_error
             raise ValueError("Error in test {}:\n{}\nYaml test content: \n{}\n".format(
                 yaml_path, error, yaml.dump(test, allow_unicode = True,
                 default_flow_style = False, indent = 2, width = 120)))
 
-        yield yaml_path, test.get('name') or filename, str(test['scenario'].period), test
+        yield yaml_path, test.get('name') or filename, text_type(test['scenario'].period), test
 
 
 def _run_test(period_str, test, verbose = False, only_variables = None, ignore_variables = None, options = {}):
@@ -231,7 +239,7 @@ def _run_test(period_str, test, verbose = False, only_variables = None, ignore_v
     scenario = test['scenario']
     scenario.suggest()
     simulation = scenario.new_simulation(trace = verbose)
-    output_variables = test.get(u'output_variables')
+    output_variables = test.get('output_variables')
     if output_variables is not None:
         try:
             for variable_name, expected_value in output_variables.items():
@@ -245,7 +253,7 @@ def _run_test(period_str, test, verbose = False, only_variables = None, ignore_v
                             simulation.calculate(variable_name, requested_period),
                             expected_value_at_period,
                             absolute_error_margin = absolute_error_margin,
-                            message = u'{}@{}: '.format(variable_name, requested_period),
+                            message = '{}@{}: '.format(variable_name, requested_period),
                             relative_error_margin = relative_error_margin,
                             )
                 else:
@@ -253,7 +261,7 @@ def _run_test(period_str, test, verbose = False, only_variables = None, ignore_v
                         simulation.calculate(variable_name),
                         expected_value,
                         absolute_error_margin = absolute_error_margin,
-                        message = u'{}@{}: '.format(variable_name, period_str),
+                        message = '{}@{}: '.format(variable_name, period_str),
                         relative_error_margin = relative_error_margin,
                         )
         finally:

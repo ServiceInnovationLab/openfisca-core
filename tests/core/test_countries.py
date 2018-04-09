@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 from nose.tools import raises, assert_raises
 
 from openfisca_core.variables import Variable
@@ -88,7 +90,6 @@ def test_variable_with_reference():
                 salary = 4000,
                 ),
             ).new_simulation()
-
     revenu_disponible_avant_reforme = new_simulation().calculate('disposable_income', "2016-01")
     assert(revenu_disponible_avant_reforme > 0)
 
@@ -136,7 +137,7 @@ def test_calculate_variable_with_wrong_definition_period():
     expected_words = ['period', '2016', 'month', 'basic_income', 'ADD']
 
     for word in expected_words:
-        assert word in error_message, u'Expected "{}" in error message "{}"'.format(word, error_message)
+        assert word in error_message, 'Expected "{}" in error message "{}"'.format(word, error_message)
 
 
 @raises(ValueError)

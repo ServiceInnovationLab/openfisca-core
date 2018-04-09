@@ -9,6 +9,7 @@ A period is a triple (unit, start, size), where unit is either "month" or "year"
 Since a period is a triple it can be used as a dictionary key.
 """
 
+from __future__ import unicode_literals
 
 import calendar
 import collections
@@ -19,9 +20,9 @@ from os import linesep
 from openfisca_core import conv
 
 
-MONTH = u'month'
-YEAR = u'year'
-ETERNITY = u'eternity'
+MONTH = 'month'
+YEAR = 'year'
+ETERNITY = 'eternity'
 
 INSTANT_PATTERN = re.compile('^\d{4}(?:-\d{1,2}){0,2}$')  # matches '2015', '2015-01', '2015-01'
 
@@ -52,7 +53,7 @@ class Instant(tuple):
     def __str__(self):
         """Transform instant to a string.
 
-        >>> str(instant(2014))
+        >>> str(instant(2014)) # unicode for python 2
         '2014-01-01'
         >>> str(instant('2014-2'))
         '2014-02-01'
@@ -60,11 +61,11 @@ class Instant(tuple):
         '2014-02-03'
 
         >>> str(instant(2014))
-        u'2014-01-01'
+        '2014-01-01'
         >>> str(instant('2014-2'))
-        u'2014-02-01'
+        '2014-02-01'
         >>> str(instant('2014-2-3'))
-        u'2014-02-03'
+        '2014-02-03'
         """
         instant_str = str_by_instant_cache.get(self)
         if instant_str is None:
@@ -117,14 +118,14 @@ class Instant(tuple):
         """Create a new period starting at instant.
 
         >>> instant(2014).period('month')
-        Period((u'month', Instant((2014, 1, 1)), 1))
+        Period(('month', Instant((2014, 1, 1)), 1))
         >>> instant('2014-2').period('year', 2)
-        Period((u'year', Instant((2014, 2, 1)), 2))
+        Period(('year', Instant((2014, 2, 1)), 2))
         >>> instant('2014-2-3').period('day', size = 2)
-        Period((u'day', Instant((2014, 2, 3)), 2))
+        Period(('day', Instant((2014, 2, 3)), 2))
         """
-        assert unit in (u'day', u'month', u'year'), u'Invalid unit: {} of type {}'.format(unit, type(unit))
-        assert isinstance(size, int) and size >= 1, u'Invalid size: {} of type {}'.format(size, type(size))
+        assert unit in ('day', 'month', 'year'), 'Invalid unit: {} of type {}'.format(unit, type(unit))
+        assert isinstance(size, int) and size >= 1, 'Invalid size: {} of type {}'.format(size, type(size))
         return Period((str(unit), self, size))
 
     def offset(self, offset, unit):
@@ -209,22 +210,22 @@ class Instant(tuple):
         """
         year, month, day = self
         if offset == 'first-of':
-            if unit == u'month':
+            if unit == 'month':
                 day = 1
             else:
-                assert unit == u'year', u'Invalid unit: {} of type {}'.format(unit, type(unit))
+                assert unit == 'year', 'Invalid unit: {} of type {}'.format(unit, type(unit))
                 month = 1
                 day = 1
         elif offset == 'last-of':
-            if unit == u'month':
+            if unit == 'month':
                 day = calendar.monthrange(year, month)[1]
             else:
-                assert unit == u'year', u'Invalid unit: {} of type {}'.format(unit, type(unit))
+                assert unit == 'year', 'Invalid unit: {} of type {}'.format(unit, type(unit))
                 month = 12
                 day = 31
         else:
-            assert isinstance(offset, int), u'Invalid offset: {} of type {}'.format(offset, type(offset))
-            if unit == u'day':
+            assert isinstance(offset, int), 'Invalid offset: {} of type {}'.format(offset, type(offset))
+            if unit == 'day':
                 day += offset
                 if offset < 0:
                     while day < 1:
@@ -242,7 +243,7 @@ class Instant(tuple):
                             month = 1
                         day -= month_last_day
                         month_last_day = calendar.monthrange(year, month)[1]
-            elif unit == u'month':
+            elif unit == 'month':
                 month += offset
                 if offset < 0:
                     while month < 1:
@@ -256,7 +257,7 @@ class Instant(tuple):
                 if day > month_last_day:
                     day = month_last_day
             else:
-                assert unit == u'year', u'Invalid unit: {} of type {}'.format(unit, type(unit))
+                assert unit == 'year', 'Invalid unit: {} of type {}'.format(unit, type(unit))
                 year += offset
                 # Handle february month of leap year.
                 month_last_day = calendar.monthrange(year, month)[1]
@@ -283,11 +284,11 @@ class Period(tuple):
         """Transform period to to its Python representation as a string.
 
         >>> repr(period('year', 2014))
-        "Period((u'year', Instant((2014, 1, 1)), 1))"
+        "Period(('year', Instant((2014, 1, 1)), 1))"
         >>> repr(period('month', '2014-2'))
-        "Period((u'month', Instant((2014, 2, 1)), 1))"
+        "Period(('month', Instant((2014, 2, 1)), 1))"
         >>> repr(period('day', '2014-2-3'))
-        "Period((u'day', Instant((2014, 2, 3)), 1))"
+        "Period(('day', Instant((2014, 2, 3)), 1))"
         """
         return '{}({})'.format(self.__class__.__name__, super(Period, self).__repr__())
 
@@ -295,26 +296,26 @@ class Period(tuple):
         """Transform period to a string.
 
         >>> str(period(YEAR, 2014))
-        u'2014'
+        '2014'
 
         >>> str(period(YEAR, '2014-2'))
-        u'year:2014-02'
+        'year:2014-02'
         >>> str(period(MONTH, '2014-2'))
-        u'2014-02'
+        '2014-02'
 
         >>> str(period(YEAR, 2012, size = 2))
-        u'year:2012:2'
+        'year:2012:2'
         >>> str(period(MONTH, 2012, size = 2))
-        u'month:2012-01:2'
+        'month:2012-01:2'
         >>> str(period(MONTH, 2012, size = 12))
-        u'2012'
+        '2012'
 
         >>> str(period(YEAR, '2012-3', size = 2))
-        u'year:2012-03:2'
+        'year:2012-03:2'
         >>> str(period(MONTH, '2012-3', size = 2))
-        u'month:2012-03:2'
+        'month:2012-03:2'
         >>> str(period(MONTH, '2012-3', size = 12))
-        u'year:2012-03'
+        'year:2012-03'
         """
 
         unit, start_instant, size = self
@@ -327,23 +328,27 @@ class Period(tuple):
         if (unit == MONTH and size == 12 or unit == YEAR and size == 1):
             if month == 1:
                 # civil year starting from january
-                return str(year)
+                try : #Compatibility python 2 and Python 3
+                    unicode
+                    return unicode(year)
+                except NameError:
+                    return str(year)
             else:
                 # rolling year
-                return u'{}:{}-{:02d}'.format(YEAR, year, month)
+                return '{}:{}-{:02d}'.format(YEAR, year, month)
         # simple month
         if unit == MONTH and size == 1:
-            return u'{}-{:02d}'.format(year, month)
+            return '{}-{:02d}'.format(year, month)
         # several civil years
         if unit == YEAR and month == 1:
-            return u'{}:{}:{}'.format(unit, year, size)
+            return '{}:{}:{}'.format(unit, year, size)
 
         # complex period
-        return u'{}:{}-{:02d}:{}'.format(unit, year, month, size)
+        return '{}:{}-{:02d}:{}'.format(unit, year, month, size)
 
     @property
     def date(self):
-        assert self.size == 1, u'"date" is undefined for a period of size > 1: {}'.format(self)
+        assert self.size == 1, '"date" is undefined for a period of size > 1: {}'.format(self)
         return self.start.date
 
     @property
@@ -391,20 +396,20 @@ class Period(tuple):
         if intersection_start.day == 1 and intersection_start.month == 1 \
                 and intersection_stop.day == 31 and intersection_stop.month == 12:
             return self.__class__((
-                u'year',
+                'year',
                 intersection_start,
                 intersection_stop.year - intersection_start.year + 1,
                 ))
         if intersection_start.day == 1 and intersection_stop.day == calendar.monthrange(intersection_stop.year,
                 intersection_stop.month)[1]:
             return self.__class__((
-                u'month',
+                'month',
                 intersection_start,
                 ((intersection_stop.year - intersection_start.year) * 12 + intersection_stop.month -
                     intersection_start.month + 1),
                 ))
         return self.__class__((
-            u'day',
+            'day',
             intersection_start,
             (intersection_stop.date - intersection_start.date).days + 1,
             ))
@@ -413,135 +418,135 @@ class Period(tuple):
         """Increment (or decrement) the given period with offset units.
 
         >>> period('day', 2014).offset(1)
-        Period((u'day', Instant((2014, 1, 2)), 365))
+        Period(('day', Instant((2014, 1, 2)), 365))
         >>> period('day', 2014).offset(1, 'day')
-        Period((u'day', Instant((2014, 1, 2)), 365))
+        Period(('day', Instant((2014, 1, 2)), 365))
         >>> period('day', 2014).offset(1, 'month')
-        Period((u'day', Instant((2014, 2, 1)), 365))
+        Period(('day', Instant((2014, 2, 1)), 365))
         >>> period('day', 2014).offset(1, 'year')
-        Period((u'day', Instant((2015, 1, 1)), 365))
+        Period(('day', Instant((2015, 1, 1)), 365))
 
         >>> period('month', 2014).offset(1)
-        Period((u'month', Instant((2014, 2, 1)), 12))
+        Period(('month', Instant((2014, 2, 1)), 12))
         >>> period('month', 2014).offset(1, 'day')
-        Period((u'month', Instant((2014, 1, 2)), 12))
+        Period(('month', Instant((2014, 1, 2)), 12))
         >>> period('month', 2014).offset(1, 'month')
-        Period((u'month', Instant((2014, 2, 1)), 12))
+        Period(('month', Instant((2014, 2, 1)), 12))
         >>> period('month', 2014).offset(1, 'year')
-        Period((u'month', Instant((2015, 1, 1)), 12))
+        Period(('month', Instant((2015, 1, 1)), 12))
 
         >>> period('year', 2014).offset(1)
-        Period((u'year', Instant((2015, 1, 1)), 1))
+        Period(('year', Instant((2015, 1, 1)), 1))
         >>> period('year', 2014).offset(1, 'day')
-        Period((u'year', Instant((2014, 1, 2)), 1))
+        Period(('year', Instant((2014, 1, 2)), 1))
         >>> period('year', 2014).offset(1, 'month')
-        Period((u'year', Instant((2014, 2, 1)), 1))
+        Period(('year', Instant((2014, 2, 1)), 1))
         >>> period('year', 2014).offset(1, 'year')
-        Period((u'year', Instant((2015, 1, 1)), 1))
+        Period(('year', Instant((2015, 1, 1)), 1))
 
         >>> period('day', '2011-2-28').offset(1)
-        Period((u'day', Instant((2011, 3, 1)), 1))
+        Period(('day', Instant((2011, 3, 1)), 1))
         >>> period('month', '2011-2-28').offset(1)
-        Period((u'month', Instant((2011, 3, 28)), 1))
+        Period(('month', Instant((2011, 3, 28)), 1))
         >>> period('year', '2011-2-28').offset(1)
-        Period((u'year', Instant((2012, 2, 28)), 1))
+        Period(('year', Instant((2012, 2, 28)), 1))
 
         >>> period('day', '2011-3-1').offset(-1)
-        Period((u'day', Instant((2011, 2, 28)), 1))
+        Period(('day', Instant((2011, 2, 28)), 1))
         >>> period('month', '2011-3-1').offset(-1)
-        Period((u'month', Instant((2011, 2, 1)), 1))
+        Period(('month', Instant((2011, 2, 1)), 1))
         >>> period('year', '2011-3-1').offset(-1)
-        Period((u'year', Instant((2010, 3, 1)), 1))
+        Period(('year', Instant((2010, 3, 1)), 1))
 
         >>> period('day', '2014-1-30').offset(3)
-        Period((u'day', Instant((2014, 2, 2)), 1))
+        Period(('day', Instant((2014, 2, 2)), 1))
         >>> period('month', '2014-1-30').offset(3)
-        Period((u'month', Instant((2014, 4, 30)), 1))
+        Period(('month', Instant((2014, 4, 30)), 1))
         >>> period('year', '2014-1-30').offset(3)
-        Period((u'year', Instant((2017, 1, 30)), 1))
+        Period(('year', Instant((2017, 1, 30)), 1))
 
         >>> period('day', 2014).offset(-3)
-        Period((u'day', Instant((2013, 12, 29)), 365))
+        Period(('day', Instant((2013, 12, 29)), 365))
         >>> period('month', 2014).offset(-3)
-        Period((u'month', Instant((2013, 10, 1)), 12))
+        Period(('month', Instant((2013, 10, 1)), 12))
         >>> period('year', 2014).offset(-3)
-        Period((u'year', Instant((2011, 1, 1)), 1))
+        Period(('year', Instant((2011, 1, 1)), 1))
 
         >>> period('day', '2014-2-3').offset('first-of', 'month')
-        Period((u'day', Instant((2014, 2, 1)), 1))
+        Period(('day', Instant((2014, 2, 1)), 1))
         >>> period('day', '2014-2-3').offset('first-of', 'year')
-        Period((u'day', Instant((2014, 1, 1)), 1))
+        Period(('day', Instant((2014, 1, 1)), 1))
 
         >>> period('day', '2014-2-3', 4).offset('first-of', 'month')
-        Period((u'day', Instant((2014, 2, 1)), 4))
+        Period(('day', Instant((2014, 2, 1)), 4))
         >>> period('day', '2014-2-3', 4).offset('first-of', 'year')
-        Period((u'day', Instant((2014, 1, 1)), 4))
+        Period(('day', Instant((2014, 1, 1)), 4))
 
         >>> period('month', '2014-2-3').offset('first-of')
-        Period((u'month', Instant((2014, 2, 1)), 1))
+        Period(('month', Instant((2014, 2, 1)), 1))
         >>> period('month', '2014-2-3').offset('first-of', 'month')
-        Period((u'month', Instant((2014, 2, 1)), 1))
+        Period(('month', Instant((2014, 2, 1)), 1))
         >>> period('month', '2014-2-3').offset('first-of', 'year')
-        Period((u'month', Instant((2014, 1, 1)), 1))
+        Period(('month', Instant((2014, 1, 1)), 1))
 
         >>> period('month', '2014-2-3', 4).offset('first-of')
-        Period((u'month', Instant((2014, 2, 1)), 4))
+        Period(('month', Instant((2014, 2, 1)), 4))
         >>> period('month', '2014-2-3', 4).offset('first-of', 'month')
-        Period((u'month', Instant((2014, 2, 1)), 4))
+        Period(('month', Instant((2014, 2, 1)), 4))
         >>> period('month', '2014-2-3', 4).offset('first-of', 'year')
-        Period((u'month', Instant((2014, 1, 1)), 4))
+        Period(('month', Instant((2014, 1, 1)), 4))
 
         >>> period('year', 2014).offset('first-of')
-        Period((u'year', Instant((2014, 1, 1)), 1))
+        Period(('year', Instant((2014, 1, 1)), 1))
         >>> period('year', 2014).offset('first-of', 'month')
-        Period((u'year', Instant((2014, 1, 1)), 1))
+        Period(('year', Instant((2014, 1, 1)), 1))
         >>> period('year', 2014).offset('first-of', 'year')
-        Period((u'year', Instant((2014, 1, 1)), 1))
+        Period(('year', Instant((2014, 1, 1)), 1))
 
         >>> period('year', '2014-2-3').offset('first-of')
-        Period((u'year', Instant((2014, 1, 1)), 1))
+        Period(('year', Instant((2014, 1, 1)), 1))
         >>> period('year', '2014-2-3').offset('first-of', 'month')
-        Period((u'year', Instant((2014, 2, 1)), 1))
+        Period(('year', Instant((2014, 2, 1)), 1))
         >>> period('year', '2014-2-3').offset('first-of', 'year')
-        Period((u'year', Instant((2014, 1, 1)), 1))
+        Period(('year', Instant((2014, 1, 1)), 1))
 
         >>> period('day', '2014-2-3').offset('last-of', 'month')
-        Period((u'day', Instant((2014, 2, 28)), 1))
+        Period(('day', Instant((2014, 2, 28)), 1))
         >>> period('day', '2014-2-3').offset('last-of', 'year')
-        Period((u'day', Instant((2014, 12, 31)), 1))
+        Period(('day', Instant((2014, 12, 31)), 1))
 
         >>> period('day', '2014-2-3', 4).offset('last-of', 'month')
-        Period((u'day', Instant((2014, 2, 28)), 4))
+        Period(('day', Instant((2014, 2, 28)), 4))
         >>> period('day', '2014-2-3', 4).offset('last-of', 'year')
-        Period((u'day', Instant((2014, 12, 31)), 4))
+        Period(('day', Instant((2014, 12, 31)), 4))
 
         >>> period('month', '2014-2-3').offset('last-of')
-        Period((u'month', Instant((2014, 2, 28)), 1))
+        Period(('month', Instant((2014, 2, 28)), 1))
         >>> period('month', '2014-2-3').offset('last-of', 'month')
-        Period((u'month', Instant((2014, 2, 28)), 1))
+        Period(('month', Instant((2014, 2, 28)), 1))
         >>> period('month', '2014-2-3').offset('last-of', 'year')
-        Period((u'month', Instant((2014, 12, 31)), 1))
+        Period(('month', Instant((2014, 12, 31)), 1))
 
         >>> period('month', '2014-2-3', 4).offset('last-of')
-        Period((u'month', Instant((2014, 2, 28)), 4))
+        Period(('month', Instant((2014, 2, 28)), 4))
         >>> period('month', '2014-2-3', 4).offset('last-of', 'month')
-        Period((u'month', Instant((2014, 2, 28)), 4))
+        Period(('month', Instant((2014, 2, 28)), 4))
         >>> period('month', '2014-2-3', 4).offset('last-of', 'year')
-        Period((u'month', Instant((2014, 12, 31)), 4))
+        Period(('month', Instant((2014, 12, 31)), 4))
 
         >>> period('year', 2014).offset('last-of')
-        Period((u'year', Instant((2014, 12, 31)), 1))
+        Period(('year', Instant((2014, 12, 31)), 1))
         >>> period('year', 2014).offset('last-of', 'month')
-        Period((u'year', Instant((2014, 1, 31)), 1))
+        Period(('year', Instant((2014, 1, 31)), 1))
         >>> period('year', 2014).offset('last-of', 'year')
-        Period((u'year', Instant((2014, 12, 31)), 1))
+        Period(('year', Instant((2014, 12, 31)), 1))
 
         >>> period('year', '2014-2-3').offset('last-of')
-        Period((u'year', Instant((2014, 12, 31)), 1))
+        Period(('year', Instant((2014, 12, 31)), 1))
         >>> period('year', '2014-2-3').offset('last-of', 'month')
-        Period((u'year', Instant((2014, 2, 28)), 1))
+        Period(('year', Instant((2014, 2, 28)), 1))
         >>> period('year', '2014-2-3').offset('last-of', 'year')
-        Period((u'year', Instant((2014, 12, 31)), 1))
+        Period(('year', Instant((2014, 12, 31)), 1))
         """
         return self.__class__((self[0], self[1].offset(offset, self[0] if unit is None else unit), self[2]))
 
@@ -614,7 +619,7 @@ class Period(tuple):
         year, month, day = start_instant
         if unit == ETERNITY:
             return Instant((float("inf"), float("inf"), float("inf")))
-        if unit == u'day':
+        if unit == 'day':
             if size > 1:
                 day += size - 1
                 month_last_day = calendar.monthrange(year, month)[1]
@@ -626,13 +631,13 @@ class Period(tuple):
                     day -= month_last_day
                     month_last_day = calendar.monthrange(year, month)[1]
         else:
-            if unit == u'month':
+            if unit == 'month':
                 month += size
                 while month > 12:
                     year += 1
                     month -= 12
             else:
-                assert unit == u'year', u'Invalid unit: {} of type {}'.format(unit, type(unit))
+                assert unit == 'year', 'Invalid unit: {} of type {}'.format(unit, type(unit))
                 year += size
             day -= 1
             if day < 1:
@@ -652,9 +657,14 @@ class Period(tuple):
         return Instant((year, month, day))
 
     def to_json_dict(self):
+        try:  # Compatibility python 2 and Python 3
+            unicode
+            text_type = unicode
+        except NameError:
+            text_type = str
         return collections.OrderedDict((
             ('unit', self[0]),
-            ('start', str(self[1])),
+            ('start', text_type(self[1])),
             ('size', self[2]),
             ))
 
@@ -694,15 +704,15 @@ def instant(instant):
 
     >>> instant(2014)
     Instant((2014, 1, 1))
-    >>> instant(u'2014')
+    >>> instant('2014')
     Instant((2014, 1, 1))
-    >>> instant(u'2014-02')
+    >>> instant('2014-02')
     Instant((2014, 2, 1))
-    >>> instant(u'2014-3-2')
+    >>> instant('2014-3-2')
     Instant((2014, 3, 2))
-    >>> instant(instant(u'2014-3-2'))
+    >>> instant(instant('2014-3-2'))
     Instant((2014, 3, 2))
-    >>> instant(period('month', u'2014-3-2'))
+    >>> instant(period('month', '2014-3-2'))
     Instant((2014, 3, 2))
 
     >>> instant(None)
@@ -711,12 +721,19 @@ def instant(instant):
         return None
     if isinstance(instant, Instant):
         return instant
-    if isinstance(instant, str):
+
+    try:  # Compatibility python 2 and Python 3
+        basestring
+        text_type = basestring
+    except NameError:
+        text_type = str
+
+    if isinstance(instant, text_type):
         if not INSTANT_PATTERN.match(instant):
             raise ValueError("'{}' is not a valid instant. Instants are described using the 'YYYY-MM-DD' format, for instance '2015-06-15'.".format(instant))
         instant = Instant(
             int(fragment)
-            for fragment in instant.split(u'-', 2)[:3]
+            for fragment in instant.split('-', 2)[:3]
             )
     elif isinstance(instant, datetime.date):
         instant = Instant((instant.year, instant.month, instant.day))
@@ -749,19 +766,19 @@ def instant_date(instant):
 def period(value):
     """Return a new period, aka a triple (unit, start_instant, size).
 
-    >>> period(u'2014')
+    >>> period('2014')
     Period((YEAR, Instant((2014, 1, 1)), 1))
-    >>> period(u'year:2014')
+    >>> period('year:2014')
     Period((YEAR, Instant((2014, 1, 1)), 1))
 
-    >>> period(u'2014-2')
+    >>> period('2014-2')
     Period((MONTH, Instant((2014, 2, 1)), 1))
-    >>> period(u'2014-02')
+    >>> period('2014-02')
     Period((MONTH, Instant((2014, 2, 1)), 1))
-    >>> period(u'month:2014-2')
+    >>> period('month:2014-2')
     Period((MONTH, Instant((2014, 2, 1)), 1))
 
-    >>> period(u'year:2014-2')
+    >>> period('year:2014-2')
     Period((YEAR, Instant((2014, 2, 1)), 1))
     """
     if isinstance(value, Period):
@@ -785,19 +802,26 @@ def period(value):
 
     def raise_error(value):
         message = linesep.join([
-            u"Expected a period (eg. '2017', '2017-01', ...); got: '{}'.".format(value),
-            u"Learn more about legal period formats in OpenFisca:",
-            u"<http://openfisca.org/doc/periodsinstants.html#api>."
+            "Expected a period (eg. '2017', '2017-01', ...); got: '{}'.".format(value),
+            "Learn more about legal period formats in OpenFisca:",
+            "<http://openfisca.org/doc/periodsinstants.html#api>."
             ])
         raise ValueError(message)
 
     if value == 'ETERNITY' or value == ETERNITY:
-        return Period((u'eternity', instant(datetime.date.min), float("inf")))
+        return Period(('eternity', instant(datetime.date.min), float("inf")))
 
     # check the type
     if isinstance(value, int):
         return Period((YEAR, Instant((value, 1, 1)), 1))
-    if not isinstance(value, str):
+
+    try:  # Compatibility python 2 and Python 3
+        basestring
+        text_type = basestring
+    except NameError:
+        text_type = str
+
+    if not isinstance(value, text_type):
         raise_error(value)
 
     # try to parse as a simple period
@@ -898,25 +922,25 @@ def input_to_period_tuple(value, state = None):
 
     .. note:: This function doesn't return a period, but a tuple that allows to construct a period.
 
-    >>> input_to_period_tuple(u'2014')
-    ((u'year', 2014), None)
-    >>> input_to_period_tuple(u'2014:2')
-    ((u'year', 2014, 2), None)
-    >>> input_to_period_tuple(u'2014-2')
-    ((u'month', (2014, 2)), None)
-    >>> input_to_period_tuple(u'2014-3:12')
-    ((u'month', (2014, 3), 12), None)
-    >>> input_to_period_tuple(u'2014-2-3')
-    ((u'day', (2014, 2, 3)), None)
-    >>> input_to_period_tuple(u'2014-3-4:2')
-    ((u'day', (2014, 3, 4), 2), None)
+    >>> input_to_period_tuple('2014')
+    (('year', 2014), None)
+    >>> input_to_period_tuple('2014:2')
+    (('year', 2014, 2), None)
+    >>> input_to_period_tuple('2014-2')
+    (('month', (2014, 2)), None)
+    >>> input_to_period_tuple('2014-3:12')
+    (('month', (2014, 3), 12), None)
+    >>> input_to_period_tuple('2014-2-3')
+    (('day', (2014, 2, 3)), None)
+    >>> input_to_period_tuple('2014-3-4:2')
+    (('day', (2014, 3, 4), 2), None)
 
-    >>> input_to_period_tuple(u'year:2014')
-    ((u'year', u'2014'), None)
-    >>> input_to_period_tuple(u'year:2014:2')
-    ((u'year', u'2014', u'2'), None)
-    >>> input_to_period_tuple(u'year:2014-2:2')
-    ((u'year', u'2014-2', u'2'), None)
+    >>> input_to_period_tuple('year:2014')
+    (('year', '2014'), None)
+    >>> input_to_period_tuple('year:2014:2')
+    (('year', '2014', '2'), None)
+    >>> input_to_period_tuple('year:2014-2:2')
+    (('year', '2014-2', '2'), None)
     """
     if value is None:
         return value, None
@@ -926,7 +950,7 @@ def input_to_period_tuple(value, state = None):
         clean_fragment
         for clean_fragment in (
             fragment.strip()
-            for fragment in value.split(u':')
+            for fragment in value.split(':')
             )
         if clean_fragment
         )
@@ -937,7 +961,7 @@ def input_to_period_tuple(value, state = None):
             clean_fragment
             for clean_fragment in (
                 fragment.strip()
-                for fragment in split_value[0].split(u'-')
+                for fragment in split_value[0].split('-')
                 )
             if clean_fragment
             )
@@ -945,7 +969,7 @@ def input_to_period_tuple(value, state = None):
             return conv.pipe(
                 conv.input_to_strict_int,
                 conv.test_greater_or_equal(0),
-                conv.function(lambda year: (u'year', year)),
+                conv.function(lambda year: ('year', year)),
                 )(split_value[0], state = state)
         if len(split_value) == 2:
             return conv.pipe(
@@ -961,7 +985,7 @@ def input_to_period_tuple(value, state = None):
                             ),
                         ),
                     ),
-                conv.function(lambda month_tuple: (u'month', month_tuple)),
+                conv.function(lambda month_tuple: ('month', month_tuple)),
                 )(split_value, state = state)
         if len(split_value) == 3:
             return conv.pipe(
@@ -981,15 +1005,15 @@ def input_to_period_tuple(value, state = None):
                             ),
                         ),
                     ),
-                conv.function(lambda day_tuple: (u'day', day_tuple)),
+                conv.function(lambda day_tuple: ('day', day_tuple)),
                 )(split_value, state = state)
-        return split_value, state._(u'Instant string contains too much "-" for a year, a month or a day')
+        return split_value, state._('Instant string contains too much "-" for a year, a month or a day')
     if len(split_value) == 2:
         split_start = tuple(
             clean_fragment
             for clean_fragment in (
                 fragment.strip()
-                for fragment in split_value[0].split(u'-')
+                for fragment in split_value[0].split('-')
                 )
             if clean_fragment
             )
@@ -1001,7 +1025,7 @@ def input_to_period_tuple(value, state = None):
                     conv.test_greater_or_equal(0),
                     )(split_start[0], state = state)
                 if error is None:
-                    return (u'year', start, size), None
+                    return ('year', start, size), None
             elif len(split_start) == 2:
                 start, error = conv.struct(
                     (
@@ -1016,7 +1040,7 @@ def input_to_period_tuple(value, state = None):
                         ),
                     )(split_start, state = state)
                 if error is None:
-                    return (u'month', start, size), None
+                    return ('month', start, size), None
             elif len(split_start) == 3:
                 start, error = conv.struct(
                     (
@@ -1035,7 +1059,7 @@ def input_to_period_tuple(value, state = None):
                         ),
                     )(split_start, state = state)
                 if error is None:
-                    return (u'day', start, size), None
+                    return ('day', start, size), None
     return split_value, None
 
 
@@ -1071,13 +1095,19 @@ def json_or_python_to_instant_tuple(value, state = None):
         return value, None
     if state is None:
         state = conv.default_state
+    
+    try:  # Compatibility python 2 and Python 3
+        basestring
+        text_type = basestring
+    except NameError:
+        text_type = str
 
-    if isinstance(value, str):
+    if isinstance(value, text_type):
         if year_or_month_or_day_re.match(value) is None:
-            return value, state._(u'Invalid date string')
+            return value, state._('Invalid date string')
         instant = tuple(
             int(fragment)
-            for fragment in value.split(u'-', 2)
+            for fragment in value.split('-', 2)
             )
     elif isinstance(value, datetime.date):
         instant = (value.year, value.month, value.day)
@@ -1085,13 +1115,13 @@ def json_or_python_to_instant_tuple(value, state = None):
         instant = (value,)
     elif isinstance(value, list):
         if not (1 <= len(value) <= 3):
-            return value, state._(u'Invalid size for date list')
+            return value, state._('Invalid size for date list')
         instant = tuple(value)
     else:
         if not isinstance(value, tuple):
-            return value, state._(u'Invalid type')
+            return value, state._('Invalid type')
         if not (1 <= len(value) <= 3):
-            return value, state._(u'Invalid size for date tuple')
+            return value, state._('Invalid size for date tuple')
         instant = value
 
     return instant, None

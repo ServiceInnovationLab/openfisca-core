@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
 
 import warnings
 from os import linesep
@@ -109,17 +110,17 @@ class Simulation(object):
         if self._data_storage_dir is None:
             self._data_storage_dir = tempfile.mkdtemp(prefix = "openfisca_")
             log.warn((
-                u"Intermediate results will be stored on disk in {} in case of memory overflow. "
-                u"You should remove this directory once you're done with your simulation."
+                "Intermediate results will be stored on disk in {} in case of memory overflow. "
+                "You should remove this directory once you're done with your simulation."
                 ).format(self._data_storage_dir))
         return self._data_storage_dir
 
     @property
     def holder_by_name(self):
         warnings.warn(
-            u"The simulation.holder_by_name attribute has been deprecated. "
-            u"Please use entity.get_holder instead. "
-            u"Using simulation.holder_by_name may negatively impact performances",
+            "The simulation.holder_by_name attribute has been deprecated. "
+            "Please use entity.get_holder instead. "
+            "Using simulation.holder_by_name may negatively impact performances",
             Warning
             )
 
@@ -207,8 +208,8 @@ class Simulation(object):
 
     def get_holder(self, variable_name, default = UnboundLocalError):
         warnings.warn(
-            u"The simulation.get_holder method has been deprecated. "
-            u"Please use entity.get_holder instead.",
+            "The simulation.get_holder method has been deprecated. "
+            "Please use entity.get_holder instead.",
             Warning
             )
         variable = self.tax_benefit_system.get_variable(variable_name, check_existence = True)
@@ -222,8 +223,8 @@ class Simulation(object):
 
     def get_or_new_holder(self, variable_name):
         warnings.warn(
-            u"The simulation.get_or_new_holder method has been deprecated. "
-            u"Please use entity.get_holder instead.",
+            "The simulation.get_or_new_holder method has been deprecated. "
+            "Please use entity.get_holder instead.",
             Warning
             )
         variable = self.tax_benefit_system.get_variable(variable_name, check_existence = True)
@@ -278,15 +279,20 @@ class Simulation(object):
 
 
 def check_type(input, type, path = []):
+    try:
+        basestring
+        text_type = basestring
+    except NameError:
+        text_type = str
     json_type_map = {
         dict: "Object",
         list: "Array",
-        str: "String"
+        text_type: "String"
         }
 
     if not isinstance(input, type):
         raise SituationParsingError(path,
-            u"Invalid type: must be of type '{}'.".format(json_type_map[type]))
+            "Invalid type: must be of type '{}'.".format(json_type_map[type]))
 
 
 class SituationParsingError(Exception):

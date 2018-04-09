@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 
+from __future__ import unicode_literals
+
 import glob
 from inspect import isclass
 from os import path, linesep
@@ -96,13 +98,17 @@ class TaxBenefitSystem(object):
         pass
 
     def load_variable(self, variable_class, update = False):
-        name = str(variable_class.__name__)
+        try:
+            unicode
+            name = unicode(variable_class.__name__)
+        except NameError:
+            name = str(variable_class.__name__)
 
         # Check if a Variable with the same name is already registered.
         baseline_variable = self.get_variable(name)
         if baseline_variable and not update:
             raise VariableNameConflict(
-                u'Variable "{}" is already defined. Use `update_variable` to replace it.'.format(name))
+                'Variable "{}" is already defined. Use `update_variable` to replace it.'.format(name))
 
         variable = variable_class(baseline_variable = baseline_variable)
         self.variables[variable.name] = variable
@@ -152,7 +158,7 @@ class TaxBenefitSystem(object):
                         pot_variable.__module__.endswith(module_name):
                     self.add_variable(pot_variable)
         except:
-            log.error(u'Unable to load OpenFisca variables from file "{}"'.format(file_path))
+            log.error('Unable to load OpenFisca variables from file "{}"'.format(file_path))
             raise
 
     def add_variables_from_directory(self, directory):
@@ -196,9 +202,9 @@ class TaxBenefitSystem(object):
                 extension_directory = package.__path__[0]
             except ImportError:
                 message = linesep.join([traceback.format_exc(),
-                                        u'Error loading extension: `{}` is neither a directory, nor a package.'.format(extension),
-                                        u'Are you sure it is installed in your environment? If so, look at the stack trace above to determine the origin of this error.',
-                                        u'See more at <https://github.com/openfisca/openfisca-extension-template#installing>.'])
+                                        'Error loading extension: `{}` is neither a directory, nor a package.'.format(extension),
+                                        'Are you sure it is installed in your environment? If so, look at the stack trace above to determine the origin of this error.',
+                                        'See more at <https://github.com/openfisca/openfisca-extension-template#installing>.'])
                 raise ValueError(message)
 
         self.add_variables_from_directory(extension_directory)
@@ -226,19 +232,19 @@ class TaxBenefitSystem(object):
         try:
             reform_package, reform_name = reform_path.rsplit('.', 1)
         except ValueError:
-            raise ValueError(u'`{}` does not seem to be a path pointing to a reform. A path looks like `some_country_package.reforms.some_reform.`'.format(reform_path))
+            raise ValueError('`{}` does not seem to be a path pointing to a reform. A path looks like `some_country_package.reforms.some_reform.`'.format(reform_path))
         try:
             reform_module = importlib.import_module(reform_package)
         except ImportError:
             message = linesep.join([traceback.format_exc(),
-                                    u'Could not import `{}`.'.format(reform_package),
-                                    u'Are you sure of this reform module name? If so, look at the stack trace above to determine the origin of this error.'])
+                                    'Could not import `{}`.'.format(reform_package),
+                                    'Are you sure of this reform module name? If so, look at the stack trace above to determine the origin of this error.'])
             raise ValueError(message)
         reform = getattr(reform_module, reform_name, None)
         if reform is None:
-            raise ValueError(u'{} has no attribute {}'.format(reform_package, reform_name))
+            raise ValueError('{} has no attribute {}'.format(reform_package, reform_name))
         if not issubclass(reform, Reform):
-            raise ValueError(u'`{}` does not seem to be a valid Openfisca reform.'.format(reform_path))
+            raise ValueError('`{}` does not seem to be a valid Openfisca reform.'.format(reform_path))
 
         return reform(self)
 

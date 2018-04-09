@@ -67,17 +67,24 @@ def translate_xml_element_to_json_item(xml_element):
 
 def make_validate_node_xml_json(tax_benefit_system):
     def validate_node_xml_json(node, state = None):
+        try:  # Compatibility python 2 and Python 3
+            basestring
+            text_type = basestring
+            color_type = unicode
+        except NameError:
+            text_type = str
+            color_type = str
         validated_node, errors = conv.pipe(
             conv.test_isinstance(dict),
             conv.struct(
                 dict(
                     code = conv.pipe(
-                        conv.test_isinstance(str),
+                        conv.test_isinstance(text_type),
                         conv.cleanup_line,
                         conv.not_none,
                         ),
                     color = conv.pipe(
-                        conv.test_isinstance(str),
+                        conv.test_isinstance(text_type),
                         conv.function(lambda colors: colors.split(u',')),
                         conv.uniform_sequence(
                             conv.pipe(
@@ -87,10 +94,10 @@ def make_validate_node_xml_json(tax_benefit_system):
                                 ),
                             ),
                         conv.test(lambda colors: len(colors) == 3, error = N_(u'Wrong number of colors in triplet.')),
-                        conv.function(lambda colors: u','.join(str(color) for color in colors)),
+                        conv.function(lambda colors: u','.join(color_type(color) for color in colors)),
                         ),
                     desc = conv.pipe(
-                        conv.test_isinstance(str),
+                        conv.test_isinstance(text_type),
                         conv.cleanup_line,
                         conv.not_none,
                         ),
@@ -103,20 +110,20 @@ def make_validate_node_xml_json(tax_benefit_system):
                         conv.empty_to_none,
                         ),
                     shortname = conv.pipe(
-                        conv.test_isinstance(str),
+                        conv.test_isinstance(text_type),
                         conv.cleanup_line,
                         conv.not_none,
                         ),
                     tail = conv.pipe(
-                        conv.test_isinstance(str),
+                        conv.test_isinstance(text_type),
                         conv.cleanup_text,
                         ),
                     text = conv.pipe(
-                        conv.test_isinstance(str),
+                        conv.test_isinstance(text_type),
                         conv.cleanup_text,
                         ),
                     typevar = conv.pipe(
-                        conv.test_isinstance(str),
+                        conv.test_isinstance(text_type),
                         conv.input_to_int,
                         conv.test_equals(2),
                         ),

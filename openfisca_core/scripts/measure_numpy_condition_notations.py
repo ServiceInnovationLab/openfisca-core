@@ -11,6 +11,7 @@ Measure and compare different vectorial condition notations:
 The aim of this script is to compare the time taken by the calculation of the values
 """
 
+from __future__ import unicode_literals
 
 from contextlib import contextmanager
 import argparse
@@ -28,7 +29,7 @@ def measure_time(title):
     t1 = time.time()
     yield
     t2 = time.time()
-    print(u'{}\t: {:.8f} seconds elapsed'.format(title, t2 - t1))
+    print('{}\t: {:.8f} seconds elapsed'.format(title, t2 - t1))
 
 
 def switch_fromiter(conditions, function_by_condition, dtype):
@@ -129,8 +130,11 @@ def main():
         help = "time taken by the calculation in seconds")
     global args
     args = parser.parse_args()
-
-    print(str(args).format('utf-8'))
+    try :
+        unicode
+        print(unicode(args).format('utf-8'))
+    except NameError:
+        print(str(args))
     test_all_notations()
 
 

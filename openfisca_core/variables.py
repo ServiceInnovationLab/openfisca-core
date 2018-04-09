@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
+from __future__ import unicode_literals
 import inspect
 import textwrap
 import datetime
@@ -140,7 +141,11 @@ class Variable(object):
     """
 
     def __init__(self, baseline_variable = None):
-        self.name = str(self.__class__.__name__)
+        try:
+            unicode
+            self.name = unicode(self.__class__.__name__)
+        except NameError:
+            self.name = unicode(self.__class__.__name__)
         attr = dict(self.__class__.__dict__)
         self.baseline_variable = baseline_variable
         self.value_type = self.set(attr, 'value_type', required = True, allowed_values = VALUE_TYPES.keys())
@@ -158,11 +163,11 @@ class Variable(object):
             self.default_value = self.set(attr, 'default_value', allowed_type = self.value_type, default = VALUE_TYPES[self.value_type].get('default'))
         self.entity = self.set(attr, 'entity', required = True, setter = self.set_entity)
         self.definition_period = self.set(attr, 'definition_period', required = True, allowed_values = (MONTH, YEAR, ETERNITY))
-        self.label = self.set(attr, 'label', allowed_type = str, setter = self.set_label)
-        self.end = self.set(attr, 'end', allowed_type = str, setter = self.set_end)
+        self.label = self.set(attr, 'label', allowed_type = 'basestring', setter = self.set_label)
+        self.end = self.set(attr, 'end', allowed_type = 'basestring', setter = self.set_end)
         self.reference = self.set(attr, 'reference', setter = self.set_reference)
-        self.cerfa_field = self.set(attr, 'cerfa_field', allowed_type = (str, dict))
-        self.unit = self.set(attr, 'unit', allowed_type = str)
+        self.cerfa_field = self.set(attr, 'cerfa_field', allowed_type = ('basestring', dict))
+        self.unit = self.set(attr, 'unit', allowed_type = 'basestring')
         self.set_input = self.set_set_input(attr.pop('set_input', None))
         self.calculate_output = self.set_calculate_output(attr.pop('calculate_output', None))
         self.is_period_size_independent = self.set(attr, 'is_period_size_independent', allowed_type = bool, default = VALUE_TYPES[self.value_type]['is_period_size_independent'])
@@ -172,6 +177,19 @@ class Variable(object):
 
     def set(self, attributes, attribute_name, required = False, allowed_values = None, allowed_type = None, setter = None, default = None):
         value = attributes.pop(attribute_name, None)
+        if (allowed_type == 'basestring'):
+            try:
+                basestring
+                allowed_type = basestring
+            except NameError:
+                allowed_type = str
+        elif (type(allowed_type) == tuple) and ('basestring' in allowed_type):
+            try:
+                basestring
+                allowed_type = (basestring if (x == 'basestring') else x for x in allowed_type)
+            except NameError:
+                allowed_type = (str if (x == 'basestring') else x for x in allowed_type)
+
         if value is None and self.baseline_variable:
             return getattr(self.baseline_variable, attribute_name)
         if required and not value:
@@ -205,10 +223,16 @@ class Variable(object):
 
     def set_label(self, label):
         if label:
-            if isinstance(label, str):
-                return label
-            else:
-                return str(label, 'utf-8')
+            try:
+                unicode
+                if isinstance(label, unicode):
+                    return label
+                else:
+                    return unicode(label, 'utf-8')
+            except NameError:
+                if isinstance(label, str):
+                    return label
+
 
     def set_end(self, end):
         if end:
@@ -219,7 +243,13 @@ class Variable(object):
 
     def set_reference(self, reference):
         if reference:
-            if isinstance(reference, str):
+            try:
+                basestring
+                type_string = basestring
+            except NameError:
+                type_string = str
+
+            if isinstance(reference, type_string):
                 reference = [reference]
             elif isinstance(reference, list):
                 pass
@@ -229,7 +259,7 @@ class Variable(object):
                 raise TypeError('The reference of the variable {} is a {} instead of a String or a List of Strings.'.format(self.name, type(reference)))
 
             for element in reference:
-                if not isinstance(element, str):
+                if not isinstance(element, type_string):
                     raise TypeError(
                         'The reference of the variable {} is a {} instead of a String or a List of Strings.'.format(
                             self.name, type(reference)))

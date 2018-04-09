@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 import os
 from ..indexed_enums import Enum, EnumArray
 
@@ -25,8 +27,13 @@ def assert_near(value, target_value, absolute_error_margin = None, message = '',
         value = np.array(value)
     if isinstance(target_value, (list, tuple)):
         target_value = np.array(target_value)
-    if isinstance(message, str):
-        message = message
+    try:
+        unicode
+        if isinstance(message, unicode):
+            message = message
+    except NameError:
+        if isinstance(message, str):
+            message = message
     if isinstance(value, np.ndarray):
         if isinstance(target_value, Enum) or (isinstance(target_value, np.ndarray) and target_value.dtype == object):
             if not isinstance(value, EnumArray):

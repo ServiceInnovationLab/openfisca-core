@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-from __future__ import division
+from __future__ import division, unicode_literals
 
 import collections
 import inspect
@@ -87,7 +87,7 @@ class Formula(object):
                     'You declared that "{}" ends on "{}", but you wrote a formula to calculate it from "{}" ({}). The "end" attribute of a variable must be posterior to the start dates of all its formulas.'.format(variable.name, variable.end, formula_start_date, function_name)
             dated_formula_class_attributes = formula_class_attributes.copy()
             dated_formula_class_attributes['formula'] = function
-            dated_formula_class = type(variable.name, (Formula,), dated_formula_class_attributes)
+            dated_formula_class = type(str(variable.name), (Formula,), dated_formula_class_attributes)
 
             del attributes[function_name]
             dated_formulas_class.append(dict(
@@ -114,7 +114,7 @@ class Formula(object):
         assert not attributes, 'Unexpected attributes in definition of variable "{}": {!r}'.format(variable.name,
             ', '.join(sorted(attributes.iterkeys())))
 
-        return type(variable.name, (Formula,), formula_class_attributes)
+        return type(str(variable.name), (Formula,), formula_class_attributes)
 
     def __init__(self, holder = None):
         assert holder is not None
@@ -186,7 +186,7 @@ class Formula(object):
         if entity is None:
             entity = holder.entity
         else:
-            assert entity in simulation.tax_benefit_system.entities, u"Unknown entity: {}".format(entity)
+            assert entity in simulation.tax_benefit_system.entities, "Unknown entity: {}".format(entity)
 
         assert not entity.is_person
         if isinstance(array_or_dated_holder, (holders.DatedHolder, holders.Holder)):
@@ -194,10 +194,10 @@ class Formula(object):
             array = array_or_dated_holder.array
         else:
             array = array_or_dated_holder
-            assert isinstance(array, np.ndarray), u"Expected a holder or a Numpy array. Got: {}".format(array).encode(
+            assert isinstance(array, np.ndarray), "Expected a holder or a Numpy array. Got: {}".format(array).encode(
                 'utf-8')
             persons_count = persons.count
-            assert array.size == persons_count, u"Expected an array of size {}. Got: {}".format(persons_count,
+            assert array.size == persons_count, "Expected an array of size {}. Got: {}".format(persons_count,
                 array.size)
         entity_index_array = simulation.get_entity(entity).members_entity_id
 
@@ -227,22 +227,22 @@ class Formula(object):
             if entity is None:
                 entity = array_or_dated_holder.entity
             else:
-                assert entity in simulation.tax_benefit_system.entities, u"Unknown entity: {}".format(entity)
+                assert entity in simulation.tax_benefit_system.entities, "Unknown entity: {}".format(entity)
 
                 assert entity == array_or_dated_holder.entity, \
-                    u"""Holder entity "{}" and given entity "{}" don't match""".format(entity.key,
+                    """Holder entity "{}" and given entity "{}" don't match""".format(entity.key,
                         array_or_dated_holder.variable.entity.key)
             array = array_or_dated_holder.array
             if default is None:
                 default = array_or_dated_holder.variable.default_value
         else:
-            assert entity in simulation.tax_benefit_system.entities, u"Unknown entity: {}".format(entity)
+            assert entity in simulation.tax_benefit_system.entities, "Unknown entity: {}".format(entity)
 
             array = array_or_dated_holder
-            assert isinstance(array, np.ndarray), u"Expected a holder or a Numpy array. Got: {}".format(array).encode(
+            assert isinstance(array, np.ndarray), "Expected a holder or a Numpy array. Got: {}".format(array).encode(
                 'utf-8')
             entity_count = entity.count
-            assert array.size == entity_count, u"Expected an array of size {}. Got: {}".format(entity_count,
+            assert array.size == entity_count, "Expected an array of size {}. Got: {}".format(entity_count,
                 array.size)
             if default is None:
                 default = 0
@@ -259,7 +259,7 @@ class Formula(object):
             try:
                 target_array[boolean_filter] = array[entity_index_array[boolean_filter]]
             except:
-                log.error(u'An error occurred while transforming array for role {}[{}] in function {}'.format(
+                log.error('An error occurred while transforming array for role {}[{}] in function {}'.format(
                     entity.key, role, holder.variable.name))
                 raise
         return target_array
@@ -272,7 +272,7 @@ class Formula(object):
         if entity is None:
             entity = holder.entity
         else:
-            assert entity in simulation.tax_benefit_system.entities, u"Unknown entity: {}".format(entity)
+            assert entity in simulation.tax_benefit_system.entities, "Unknown entity: {}".format(entity)
 
         assert not entity.is_person
         if isinstance(array_or_dated_holder, (holders.DatedHolder, holders.Holder)):
@@ -282,10 +282,10 @@ class Formula(object):
                 default = array_or_dated_holder.variable.default_value
         else:
             array = array_or_dated_holder
-            assert isinstance(array, np.ndarray), u"Expected a holder or a Numpy array. Got: {}".format(array).encode(
+            assert isinstance(array, np.ndarray), "Expected a holder or a Numpy array. Got: {}".format(array).encode(
                 'utf-8')
             persons_count = persons.count
-            assert array.size == persons_count, u"Expected an array of size {}. Got: {}".format(persons_count,
+            assert array.size == persons_count, "Expected an array of size {}. Got: {}".format(persons_count,
                 array.size)
             if default is None:
                 default = 0
@@ -299,7 +299,7 @@ class Formula(object):
         try:
             target_array[entity_index_array[boolean_filter]] = array[boolean_filter]
         except:
-            log.error(u'An error occurred while filtering array for role {}[{}] in function {}'.format(
+            log.error('An error occurred while filtering array for role {}[{}] in function {}'.format(
                 entity.key, role, holder.variable.name))
             raise
         return target_array
@@ -312,7 +312,7 @@ class Formula(object):
         if entity is None:
             entity = holder.entity
         else:
-            assert entity in simulation.tax_benefit_system.entities, u"Unknown entity: {}".format(entity)
+            assert entity in simulation.tax_benefit_system.entities, "Unknown entity: {}".format(entity)
 
         assert not entity.is_person
         if isinstance(array_or_dated_holder, (holders.DatedHolder, holders.Holder)):
@@ -322,10 +322,10 @@ class Formula(object):
                 default = array_or_dated_holder.variable.default_value
         else:
             array = array_or_dated_holder
-            assert isinstance(array, np.ndarray), u"Expected a holder or a Numpy array. Got: {}".format(array).encode(
+            assert isinstance(array, np.ndarray), "Expected a holder or a Numpy array. Got: {}".format(array).encode(
                 'utf-8')
             persons_count = persons.count
-            assert array.size == persons_count, u"Expected an array of size {}. Got: {}".format(persons_count,
+            assert array.size == persons_count, "Expected an array of size {}. Got: {}".format(persons_count,
                 array.size)
             if default is None:
                 default = 0
@@ -344,7 +344,7 @@ class Formula(object):
             try:
                 target_array[entity_index_array[boolean_filter]] = array[boolean_filter]
             except:
-                log.error(u'An error occurred while filtering array for role {}[{}] in function {}'.format(
+                log.error('An error occurred while filtering array for role {}[{}] in function {}'.format(
                     entity.key, role, holder.variable.name))
                 raise
         return target_array_by_role
@@ -356,7 +356,7 @@ class Formula(object):
         if entity is None:
             entity = holder.entity
         else:
-            assert entity in simulation.tax_benefit_system.entities, u"Unknown entity: {}".format(entity)
+            assert entity in simulation.tax_benefit_system.entities, "Unknown entity: {}".format(entity)
 
         assert not entity.is_person
         if isinstance(array_or_dated_holder, (holders.DatedHolder, holders.Holder)):
@@ -364,10 +364,10 @@ class Formula(object):
             array = array_or_dated_holder.array
         else:
             array = array_or_dated_holder
-            assert isinstance(array, np.ndarray), u"Expected a holder or a Numpy array. Got: {}".format(array).encode(
+            assert isinstance(array, np.ndarray), "Expected a holder or a Numpy array. Got: {}".format(array).encode(
                 'utf-8')
             persons_count = persons.count
-            assert array.size == persons_count, u"Expected an array of size {}. Got: {}".format(persons_count,
+            assert array.size == persons_count, "Expected an array of size {}. Got: {}".format(persons_count,
                 array.size)
 
         entity_index_array = simulation.get_entity(entity).members_entity_id
@@ -398,11 +398,11 @@ class Formula(object):
         the parameter max_nb_cycles of the calculate method.
         """
         def get_error_message():
-            return u'Circular definition detected on formula {}<{}>. Formulas and periods involved: {}.'.format(
+            return 'Circular definition detected on formula {}<{}>. Formulas and periods involved: {}.'.format(
                 variable.name,
                 period,
-                u', '.join(sorted(set(
-                    u'{}<{}>'.format(variable_name, period2)
+                ', '.join(sorted(set(
+                    '{}<{}>'.format(variable_name, period2)
                     for variable_name, periods in requested_periods_by_variable_name.items()
                     for period2 in periods
                     ))),
@@ -488,21 +488,21 @@ class Formula(object):
             else:
                 raise
         except:
-            log.error(u'An error occurred while calling formula {}@{}<{}> in module {}'.format(
+            log.error('An error occurred while calling formula {}@{}<{}> in module {}'.format(
                 variable.name, entity.key, str(period), self.__module__,
                 ))
             raise
 
         assert isinstance(array, np.ndarray), (linesep.join([
-            u"You tried to compute the formula '{0}' for the period '{1}'.".format(variable.name, str(period)),
-            u"The formula '{0}@{1}' should return a Numpy array;".format(variable.name, str(period)),
-            u"instead it returned '{0}' of '{1}'.".format(array, type(array)),
-            u"Learn more about Numpy arrays and vectorial computing:",
-            u"<http://openfisca.org/doc/coding-the-legislation/25_vectorial_computing.html.>"
+            "You tried to compute the formula '{0}' for the period '{1}'.".format(variable.name, str(period)),
+            "The formula '{0}@{1}' should return a Numpy array;".format(variable.name, str(period)),
+            "instead it returned '{0}' of '{1}'.".format(array, type(array)),
+            "Learn more about Numpy arrays and vectorial computing:",
+            "<http://openfisca.org/doc/coding-the-legislation/25_vectorial_computing.html.>"
             ]))
         entity_count = entity.count
         assert array.size == entity_count, \
-            u"Function {}@{}<{}>() --> <{}>{} returns an array of size {}, but size {} is expected for {}".format(
+            "Function {}@{}<{}>() --> <{}>{} returns an array of size {}, but size {} is expected for {}".format(
                 variable.name, entity.key, str(period), str(period), stringify_array(array),
                 array.size, entity_count, entity.key)
         if debug:
@@ -510,7 +510,7 @@ class Formula(object):
                 # cf https://stackoverflow.com/questions/6736590/fast-check-for-nan-in-numpy
                 if np.isnan(np.min(array)):
                     nan_count = np.count_nonzero(np.isnan(array))
-                    raise NaNCreationError(u"Function {}@{}<{}>() --> <{}>{} returns {} NaN value(s)".format(
+                    raise NaNCreationError("Function {}@{}<{}>() --> <{}>{} returns {} NaN value(s)".format(
                         variable.name, entity.key, str(period), str(period), stringify_array(array),
                         nan_count))
             except TypeError:
@@ -591,7 +591,7 @@ class Formula(object):
         comments = inspect.getcomments(function)
         doc = inspect.getdoc(function)
         self_json = collections.OrderedDict((
-            ('@type', u'SimpleFormula'),
+            ('@type', 'SimpleFormula'),
             ('comments', comments.decode('utf-8') if comments is not None else None),
             ('doc', doc.decode('utf-8') if doc is not None else None),
             ))
@@ -620,7 +620,7 @@ class Formula(object):
 
     def to_json(self, get_input_variables_and_parameters = None, with_input_variables_details = False):
         return collections.OrderedDict((
-            ('@type', u'DatedFormula'),
+            ('@type', 'DatedFormula'),
             ('dated_formulas', [
                 dict(
                     formula = self.formula_to_json(
@@ -653,7 +653,7 @@ def get_neutralized_variable(variable):
     """
     result = variable.clone()
     result.is_neutralized = True
-    result.label = u'[Neutralized]' if variable.label is None else u'[Neutralized] {}'.format(variable.label),
+    result.label = '[Neutralized]' if variable.label is None else '[Neutralized] {}'.format(variable.label),
     result.set_input = set_input_neutralized
     result.formula.set_input = set_input_neutralized
 
@@ -761,12 +761,12 @@ def set_input_divide_by_period(formula, period, array):
                 holder.put_in_cache(divided_array, sub_period)
             sub_period = sub_period.offset(1)
     elif not (remaining_array == 0).all():
-        raise ValueError(u"Inconsistent input: variable {0} has already been set for all months contained in period {1}, and value {2} provided for {1} doesn't match the total ({3}). This error may also be thrown if you try to call set_input twice for the same variable and period.".format(holder.variable.name, period, array, array - remaining_array))
+        raise ValueError("Inconsistent input: variable {0} has already been set for all months contained in period {1}, and value {2} provided for {1} doesn't match the total ({3}). This error may also be thrown if you try to call set_input twice for the same variable and period.".format(holder.variable.name, period, array, array - remaining_array))
 
 
 def set_input_neutralized(formula, period, array):
     warnings.warn(
-        u"You cannot set a value for the variable {}, as it has been neutralized. The value you provided ({}) will be ignored."
+        "You cannot set a value for the variable {}, as it has been neutralized. The value you provided ({}) will be ignored."
         .format(formula.holder.variable.name, array),
         Warning
         )

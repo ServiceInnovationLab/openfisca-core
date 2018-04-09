@@ -19,7 +19,13 @@ def empty_clone(original):
 def stringify_array(array):
     """Generate a clean string representation of a NumPY array.
     """
+    try:  # Compatibility python 2 and Python 3
+        unicode
+        text_type = unicode
+    except NameError:
+        text_type = str
+
     return u'[{}]'.format(u', '.join(
-        str(cell)
+        text_type(cell)
         for cell in array
         )) if array is not None else u'None'

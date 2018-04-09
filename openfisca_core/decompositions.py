@@ -74,6 +74,12 @@ def iter_decomposition_nodes(node_or_nodes, children_first = False):
 
 def make_validate_node_json(tax_benefit_system):
     def validate_node_json(node, state = None):
+        try:  # Compatibility python 2 and Python 3
+            basestring
+            text_type = basestring
+        except NameError:
+            text_type = str
+
         if node is None:
             return None, None
         if state is None:
@@ -87,7 +93,7 @@ def make_validate_node_json(tax_benefit_system):
                     ),
                 conv.pipe(
                     conv.condition(
-                        conv.test_isinstance(str),
+                        conv.test_isinstance(text_type),
                         conv.function(lambda code: dict(code = code)),
                         conv.test_isinstance(dict),
                         ),
@@ -102,7 +108,7 @@ def make_validate_node_json(tax_benefit_system):
                                 conv.empty_to_none,
                                 ),
                             code = conv.pipe(
-                                conv.test_isinstance(str),
+                                conv.test_isinstance(text_type),
                                 conv.cleanup_line,
                                 ),
                             ),

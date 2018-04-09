@@ -3,6 +3,7 @@
 
 """Handle legislative parameters."""
 
+from __future__ import unicode_literals
 
 import os
 import logging
@@ -34,7 +35,7 @@ def date_constructor(loader, node):
     return node.value
 
 
-yaml.add_constructor(u'tag:yaml.org,2002:timestamp', date_constructor, Loader = Loader)
+yaml.add_constructor('tag:yaml.org,2002:timestamp', date_constructor, Loader = Loader)
 
 
 class ParameterNotFound(AttributeError):
@@ -50,11 +51,11 @@ class ParameterNotFound(AttributeError):
         self.name = name
         self.instant_str = instant_str
         self.variable_name = variable_name
-        message = u"The parameter '{}'".format(name)
+        message = "The parameter '{}'".format(name)
         if variable_name is not None:
-            message += u" requested by variable '{}'".format(variable_name)
+            message += " requested by variable '{}'".format(variable_name)
         message += (
-            u" was not found in the {} tax and benefit system."
+            " was not found in the {} tax and benefit system."
             ).format(instant_str)
         super(ParameterNotFound, self).__init__(message)
 
@@ -174,8 +175,14 @@ class Parameter(object):
         """
         if period is not None:
             if start is not None or stop is not None:
-                raise TypeError(u"Wrong input for 'update' method: use either 'update(period, value = value)' or 'update(start = start, stop = stop, value = value)'. You cannot both use 'period' and 'start' or 'stop'.")
-            if isinstance(period, str):
+                raise TypeError("Wrong input for 'update' method: use either 'update(period, value = value)' or 'update(start = start, stop = stop, value = value)'. You cannot both use 'period' and 'start' or 'stop'.")
+
+            try:  # Compatibility python 2 and Python 3
+                basestring
+                text_type = basestring
+            except NameError:
+                text_type = str
+            if isinstance(period, text_type):
                 period = periods.period(period)
             start = period.start
             stop = period.stop

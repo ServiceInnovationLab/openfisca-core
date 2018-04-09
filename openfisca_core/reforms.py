@@ -48,7 +48,11 @@ class Reform(TaxBenefitSystem):
         self.variables = baseline.variables.copy()
         self.decomposition_file_path = baseline.decomposition_file_path
         self.Scenario = baseline.Scenario
-        self.key = str(self.__class__.__name__)
+        try: #compatibility python 2 & 3
+            unicode
+            self.key = unicode(self.__class__.__name__)
+        except NameError:
+            self.key = str(self.__class__.__name__)
         if not hasattr(self, 'apply'):
             raise Exception("Reform {} must define an `apply` function".format(self.key))
         self.apply()

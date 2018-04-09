@@ -166,8 +166,14 @@ class BoolCol(Column):
 
     @property
     def json_to_dated_python(self):
+        try:  # Compatibility python 2 and Python 3
+            basestring
+            text_type = basestring
+        except NameError:
+            text_type = str
+
         return conv.pipe(
-            conv.test_isinstance((str, bool, int)),
+            conv.test_isinstance((text_type, bool, int)),
             conv.guess_bool,
             )
 
@@ -187,10 +193,21 @@ class DateCol(Column):
             )
 
     def json_default(self):
-        return str(np.array(self.default_value, self.dtype))
+        try:  # Compatibility python 2 and Python 3
+            unicode
+            text_type = unicode
+        except NameError:
+            text_type = str
+
+        return text_type(np.array(self.default_value, self.dtype))
 
     @property
     def json_to_dated_python(self):
+        try:  # Compatibility python 2 and Python 3
+            basestring
+            text_type = basestring
+        except NameError:
+            text_type = str
         return conv.pipe(
             conv.condition(
                 conv.test_isinstance(datetime.date),
@@ -202,7 +219,7 @@ class DateCol(Column):
                         conv.function(lambda year: datetime.date(year, 1, 1)),
                         ),
                     conv.pipe(
-                        conv.test_isinstance(str),
+                        conv.test_isinstance(text_type),
                         conv.test(year_or_month_or_day_re.match, error = N_(u'Invalid date')),
                         conv.function(lambda birth: u'-'.join((birth.split(u'-') + [u'01', u'01'])[:3])),
                         conv.iso8601_input_to_date,
@@ -225,13 +242,20 @@ class FixedStrCol(Column):
 
     @property
     def json_to_dated_python(self):
+        try:  # Compatibility python 2 and Python 3
+            basestring
+            text_type_basestring = basestring
+            text_type_unicode = unicode
+        except NameError:
+            text_type_basestring = str
+            text_type_unicode = str
         return conv.pipe(
             conv.condition(
                 conv.test_isinstance((float, int)),
                 # YAML stores strings containing only digits as numbers.
-                conv.function(str),
+                conv.function(text_type_unicode),
                 ),
-            conv.test_isinstance(str),
+            conv.test_isinstance(text_type_basestring),
             conv.test(lambda value: len(value) <= self.variable.max_length),
             )
 
@@ -246,8 +270,13 @@ class FloatCol(Column):
 
     @property
     def json_to_dated_python(self):
+        try:  # Compatibility python 2 and Python 3
+            basestring
+            text_type = basestring
+        except NameError:
+            text_type = str
         return conv.pipe(
-            conv.test_isinstance((float, int, str)),
+            conv.test_isinstance((float, int, text_type)),
             conv.make_anything_to_float(accept_expression = True),
             )
 
@@ -262,8 +291,13 @@ class IntCol(Column):
 
     @property
     def json_to_dated_python(self):
+        try:  # Compatibility python 2 and Python 3
+            basestring
+            text_type = basestring
+        except NameError:
+            text_type = str
         return conv.pipe(
-            conv.test_isinstance((int, str)),
+            conv.test_isinstance((int, text_type)),
             conv.make_anything_to_int(accept_expression = True),
             )
 
@@ -276,13 +310,18 @@ class StrCol(Column):
 
     @property
     def json_to_dated_python(self):
+        try:  # Compatibility python 2 and Python 3
+            basestring
+            text_type = basestring
+        except NameError:
+            text_type = str
         return conv.pipe(
             conv.condition(
                 conv.test_isinstance((float, int)),
                 # YAML stores strings containing only digits as numbers.
                 conv.function(str),
                 ),
-            conv.test_isinstance(str),
+            conv.test_isinstance(text_type),
             )
 
 
@@ -335,19 +374,30 @@ class EnumCol(Column):
             )
 
     def json_default(self):
-        return str(self.default_value) if self.default_value is not None else None
+        try:  # Compatibility python 2 and Python 3
+            unicode
+            text_type = unicode
+        except NameError:
+            text_type = str
+
+        return text_type(self.default_value) if self.default_value is not None else None
 
     @property
     def json_to_dated_python(self):
         enum = self.variable.possible_values
         possible_names = [item.name for item in list(enum)]
+        try:  # Compatibility python 2 and Python 3
+            basestring
+            text_type = basestring
+        except NameError:
+            text_type = str
 
         if enum is None:
             return conv.pipe(
-                conv.test_isinstance((str, str))
+                conv.test_isinstance((text_type, text_type))
                 )
         return conv.pipe(
-            conv.test_isinstance((str, str)),
+            conv.test_isinstance((text_type, text_type )),
             conv.pipe(
                 # Verify that item belongs to enumeration.
                 conv.test_in(possible_names),

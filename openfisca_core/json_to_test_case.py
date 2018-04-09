@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 from copy import deepcopy
 
 from openfisca_core.columns import make_column_from_variable
@@ -9,35 +11,47 @@ from openfisca_core import conv
 def check_entity_fields(entity_json, entity_class, valid_roles, tax_benefit_system):
 
     def check_id(value):
-        if value is None or not isinstance(value, (str, int)):
-            raise ValueError(u"Invalid id in entity {}".format(entity_json))
+        try:  # Compatibility python 2 and Python 3
+            basestring
+            text_type = basestring
+        except NameError:
+            text_type = str
+
+        if value is None or not isinstance(value, (text_type, int)):
+            raise ValueError("Invalid id in entity {}".format(entity_json))
 
     def check_role(value, key):
+        try:  # Compatibility python 2 and Python 3
+            basestring
+            text_type = basestring
+        except NameError:
+            text_type = str
+
         role = valid_roles.get(key)
         if role.max == 1:
-            value, error = conv.test_isinstance((str, int))(value)
+            value, error = conv.test_isinstance((text_type, int))(value)
         else:
             value, error = conv.pipe(
                 conv.make_item_to_singleton(),
                 conv.test_isinstance(list),
                 conv.uniform_sequence(
-                    conv.test_isinstance((str, int)),
+                    conv.test_isinstance((text_type, int)),
                     drop_none_items = True,
                     )
                 )(value)
 
         if error is not None:
-            raise ValueError(u"Invalid description of {}: {}. Error: {}".format(entity_class.key, entity_json, error))
+            raise ValueError("Invalid description of {}: {}. Error: {}".format(entity_class.key, entity_json, error))
         entity_json[key] = value
 
     def check_variable(value, key):
         variable = tax_benefit_system.variables[key]
         column = make_column_from_variable(variable)
         if column.entity != entity_class:
-            raise ValueError(u"Variable {} is defined for entity {}. It cannot be set for entity {}.".format(key, column.entity.key, entity_class.key))
+            raise ValueError("Variable {} is defined for entity {}. It cannot be set for entity {}.".format(key, column.entity.key, entity_class.key))
         value, error = column.json_to_python(value)
         if error is not None:
-            raise ValueError(u"Invalid value {} for variable {}. Error: {}".format(value, key, error))
+            raise ValueError("Invalid value {} for variable {}. Error: {}".format(value, key, error))
         entity_json[key] = value
 
     for key, value in entity_json.items():
@@ -71,7 +85,7 @@ def check_entities_and_role(test_case, tax_benefit_system, state):
     entity_classes = {entity_class.plural: entity_class for entity_class in tax_benefit_system.entities}
     for entity_type_name, entities in test_case.items():
         if entity_classes.get(entity_type_name) is None:
-            raise ValueError(u"Invalid entity name: {}".format(entity_type_name))
+            raise ValueError("Invalid entity name: {}".format(entity_type_name))
         entities, error = conv.pipe(
             conv.make_item_to_singleton(),
             conv.test_isinstance(list),
@@ -82,7 +96,7 @@ def check_entities_and_role(test_case, tax_benefit_system, state):
             conv.function(set_entities_json_id),
             )(entities)
         if error is not None:
-            raise ValueError(u"Invalid list of {}: {}. Error: {}".format(entity_type_name, entities, error))
+            raise ValueError("Invalid list of {}: {}. Error: {}".format(entity_type_name, entities, error))
         if entities is None:
             entities = test_case[entity_type_name] = []  # YAML test runner may set these values to None
         entity_class = entity_classes[entity_type_name]
@@ -144,14 +158,14 @@ def check_each_person_has_entities(test_case, tax_benefit_system, state):
     error = None
     if groupless_persons_ids:
         individu_index_by_id = {
-            individu[u'id']: individu_index
+            individu['id']: individu_index
             for individu_index, individu in enumerate(test_case[tax_benefit_system.person_entity.plural])
             }
         error = {}
         for person_id in groupless_persons_ids:
             error.setdefault(tax_benefit_system.person_entity.plural, {})[individu_index_by_id[person_id]] = state._(
-                u"Individual is missing from {}").format(
-                    state._(u' & ').join(
+                "Individual is missing from {}").format(
+                    state._(' & ').join(
                         word
                         for word in [
                             entity.plural if person_id in groupless_persons[entity.plural] else None

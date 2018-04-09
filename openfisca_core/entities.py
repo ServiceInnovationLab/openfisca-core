@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
 import traceback
 import warnings
 import textwrap
@@ -71,7 +72,7 @@ class Entity(object):
 
             if not isinstance(variable_values, dict):
                 raise SituationParsingError(path_in_json,
-                    u'Invalid type: must be of type object. Input variables must be set for specific periods. For instance: {"salary": {"2017-01": 2000, "2017-02": 2500}}')
+                    'Invalid type: must be of type object. Input variables must be set for specific periods. For instance: {"salary": {"2017-01": 2000, "2017-02": 2500}}')
 
             holder = self.get_holder(variable_name)
             for date, value in variable_values.items():
@@ -84,20 +85,27 @@ class Entity(object):
                     array = holder.buffer.get(period)
                     if array is None:
                         array = holder.default_array()
-                    if holder.variable.value_type == Enum and isinstance(value, str):
+
+                    try:  # Compatibility python 2 and Python 3
+                        basestring
+                        text_type = basestring
+                    except NameError:
+                        text_type = str
+
+                    if holder.variable.value_type == Enum and isinstance(value, text_type):
                         try:
                             value = holder.variable.possible_values[value].index
                         except KeyError:
                             possible_values = [item.name for item in holder.variable.possible_values]
                             raise SituationParsingError(path_in_json,
-                                u"'{}' is not a valid value for '{}'. Possible values are ['{}'].".format(
+                                "'{}' is not a valid value for '{}'. Possible values are ['{}'].".format(
                                     value, variable_name, "', '".join(possible_values))
                                 )
                     try:
                         array[entity_index] = value
                     except (ValueError, TypeError) as e:
                         raise SituationParsingError(path_in_json,
-                            u'Invalid type: must be of type {}.'.format(holder.variable.json_type))
+                            'Invalid type: must be of type {}.'.format(holder.variable.json_type))
 
                     holder.buffer[period] = array
 
@@ -115,7 +123,7 @@ class Entity(object):
                     # It is only raised when we consume the buffer. We thus don't know which exact key caused the error.
                     # We do a basic research to find the culprit path
                     culprit_path = next(
-                        dpath.search(self.entities_json, u"*/{}/{}".format(e.variable_name, str(e.period)), yielded = True),
+                        dpath.search(self.entities_json, "*/{}/{}".format(e.variable_name, str(e.period)), yielded = True),
                         None)
                     if culprit_path:
                         path = [self.plural] + culprit_path[0].split('/')
@@ -145,7 +153,7 @@ class Entity(object):
     def __getattr__(self, attribute):
         projector = get_projector_from_shortcut(self, attribute)
         if not projector:
-            raise Exception(u"Entity {} has no attribute {}".format(self.key, attribute))
+            raise Exception("Entity {} has no attribute {}".format(self.key, attribute))
         return projector
 
     @classmethod
@@ -165,25 +173,25 @@ class Entity(object):
         variable_entity = self.simulation.tax_benefit_system.get_variable(variable_name, check_existence = True).entity
         if not isinstance(self, variable_entity):
             message = linesep.join([
-                u"You tried to compute the variable '{0}' for the entity '{1}';".format(variable_name, self.plural),
-                u"however the variable '{0}' is defined for '{1}'.".format(variable_name, variable_entity.plural),
-                u"Learn more about entities in our documentation:",
-                u"<http://openfisca.org/doc/coding-the-legislation/50_entities.html>."])
+                "You tried to compute the variable '{0}' for the entity '{1}';".format(variable_name, self.plural),
+                "however the variable '{0}' is defined for '{1}'.".format(variable_name, variable_entity.plural),
+                "Learn more about entities in our documentation:",
+                "<http://openfisca.org/doc/coding-the-legislation/50_entities.html>."])
             raise ValueError(message)
 
     def check_array_compatible_with_entity(self, array):
         if not self.count == array.size:
-            raise ValueError(u"Input {} is not a valid value for the entity {}".format(array, self.key))
+            raise ValueError("Input {} is not a valid value for the entity {}".format(array, self.key))
 
     def check_role_validity(self, role):
         if role is not None and not type(role) == Role:
-            raise ValueError(u"{} is not a valid role".format(role))
+            raise ValueError("{} is not a valid role".format(role))
 
     def check_period_validity(self, variable_name, period):
         if period is None:
             stack = traceback.extract_stack()
             filename, line_number, function_name, line_of_code = stack[-3]
-            raise ValueError(u'''
+            raise ValueError('''
 You requested computation of variable "{}", but you did not specify on which period in "{}:{}":
     {}
 When you request the computation of a variable within a formula, you must always specify the period as the second parameter. The convention is to call this parameter "period". For example:
@@ -197,7 +205,7 @@ See more information at <http://openfisca.org/doc/coding-the-legislation/35_peri
         self.check_period_validity(variable_name, period)
 
         if ADD in options and DIVIDE in options:
-            raise ValueError(u'Options ADD and DIVIDE are incompatible (trying to compute variable {})'.format(variable_name))
+            raise ValueError('Options ADD and DIVIDE are incompatible (trying to compute variable {})'.format(variable_name))
         elif ADD in options:
             return self.simulation.calculate_add(variable_name, period, **parameters)
         elif DIVIDE in options:
@@ -275,7 +283,7 @@ class PersonEntity(Entity):
         self.check_role_validity(role)
 
         if not role.subroles or not len(role.subroles) == 2:
-            raise Exception(u'Projection to partner is only implemented for roles having exactly two subroles.')
+            raise Exception('Projection to partner is only implemented for roles having exactly two subroles.')
 
         [subrole_1, subrole_2] = role.subroles
         value_subrole_1 = entity.value_from_person(array, subrole_1)
@@ -377,7 +385,7 @@ class GroupEntity(Entity):
         if self.persons_to_allocate:
             unallocated_person = self.persons_to_allocate.pop()
             raise SituationParsingError([self.plural],
-                u'{0} has been declared in {1}, but is not a member of any {2}. All {1} must be allocated to a {2}.'.format(
+                '{0} has been declared in {1}, but is not a member of any {2}. All {1} must be allocated to a {2}.'.format(
                     unallocated_person, self.simulation.persons.plural, self.key)
                 )
 
@@ -388,15 +396,20 @@ class GroupEntity(Entity):
         for role_id, role_definition in roles_json.items():
             check_type(role_definition, list, [self.plural, entity_id, role_id])
             for index, person_id in enumerate(role_definition):
-                check_type(person_id, str, [self.plural, entity_id, role_id, str(index)])
+                try:  # Compatibility python 2 and Python 3
+                    basestring
+                    text_type = basestring
+                except NameError:
+                    text_type = str
+                check_type(person_id, text_type, [self.plural, entity_id, role_id, str(index)])
                 if person_id not in self.simulation.persons.ids:
                     raise SituationParsingError([self.plural, entity_id, role_id],
-                        u"Unexpected value: {0}. {0} has been declared in {1} {2}, but has not been declared in {3}.".format(
+                        "Unexpected value: {0}. {0} has been declared in {1} {2}, but has not been declared in {3}.".format(
                             person_id, entity_id, role_id, self.simulation.persons.plural)
                         )
                 if person_id not in self.persons_to_allocate:
                     raise SituationParsingError([self.plural, entity_id, role_id],
-                        u"{} has been declared more than once in {}".format(
+                        "{} has been declared more than once in {}".format(
                             person_id, self.plural)
                         )
                 self.persons_to_allocate.discard(person_id)
@@ -522,7 +535,7 @@ class GroupEntity(Entity):
         self.check_role_validity(role)
         if role.max != 1:
             raise Exception(
-                u'You can only use value_from_person with a role that is unique in {}. Role {} is not unique.'
+                'You can only use value_from_person with a role that is unique in {}. Role {} is not unique.'
                 .format(self.key, role.key)
                 )
         self.simulation.persons.check_array_compatible_with_entity(array)
