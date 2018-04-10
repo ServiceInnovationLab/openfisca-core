@@ -1,5 +1,11 @@
 # Changelog
 
+### 22.0.5 [#624](https://github.com/openfisca/openfisca-core/pull/624)
+
+* Technical improvement:
+* Details:
+  Make it more compatible with python3
+  
 ### 22.0.4 [#624](https://github.com/openfisca/openfisca-core/pull/624)
 
 * Technical improvement:
