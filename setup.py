@@ -35,6 +35,9 @@ setup(
             'openfisca-country-template >= 3.0.0, < 4.0.0',
             'openfisca-extension-template >= 1.1.3, < 2.0.0',
             ],
+        'perf': [
+            'snakeviz >= 0.4.2',
+        ],
         'tracker': [
             'openfisca-tracker == 0.2.0',
             ]

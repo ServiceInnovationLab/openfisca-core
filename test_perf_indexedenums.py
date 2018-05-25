@@ -10,7 +10,7 @@ enum = tbs.get_variable('categorie_salarie').possible_values
 categorie_salarie_enum = np.select([categorie_salarie_int == i for i in range(8)], enum)
 categorie_salarie_enum = enum.encode(categorie_salarie_enum)
 
-
+# compare 'select' function with different inputs : index vs enums
 def test_elem():
 	def formula_before(categorie_salarie):
 		return np.select(
