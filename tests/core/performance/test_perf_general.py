@@ -12,13 +12,14 @@ tbs = CountryTaxBenefitSystem()
 
 N = 1  # nombre familles
 P = 4 * N  # nombre personnes
-NB_S = 100
-period = '2018-04'
+NB_S = 10
+PERIOD = '2018-04'
+
 
 def init_simulation(with_trace):
   simulation = make_simulation(tbs, P, N, trace=with_trace)
   # randomly_init_variable(simulation, 'salary', '2018-04', 4000)
-  randomly_init_variable(simulation, 'salaire_net', '2018-04', 4000)
+  randomly_init_variable(simulation, 'salaire_net', PERIOD, 4000)
   # y = simulation.household.members_position
   # x = simulation.household.members
 
@@ -56,4 +57,4 @@ print("Total time: --- %s seconds ---" % (dt_with))
 print("% diff: " + str(100 * ((dt_with - dt_without)/dt_without)))
 
 # profile specific function
-# cProfile.run("timed()", 'NEW.prof')
+# cProfile.run("timed()", 'timed.prof')
