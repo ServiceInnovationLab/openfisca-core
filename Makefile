@@ -16,9 +16,13 @@ test:
 	nosetests
 
 perf:
-	# measure duration
+	python ${CORE_PERF_DIR}/test_load_tax_benefit_system.py
+	python ${CORE_PERF_DIR}/test_calculate.py
+	python ${CORE_PERF_DIR}/test_new_simulation.py
+
+viz:
 	python -m cProfile -o ${CORE_PERF_DIR}/CACHE.prof ${CORE_PERF_DIR}/test_perf_general.py
-	snakeviz ${CORE_PERF_DIR}/CACHE.prof 
+	snakeviz ${CORE_PERF_DIR}/CACHE.prof
 
 api:
 	openfisca serve --country-package openfisca_country_template --extensions openfisca_extension_template

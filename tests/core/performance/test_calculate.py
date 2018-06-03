@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import time
-from .base import tax_benefit_system, init_simulation
+from base import tax_benefit_system, init_simulation
 
 # python -m core.performance.test_calculate
 
