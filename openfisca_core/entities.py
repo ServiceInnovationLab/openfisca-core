@@ -168,14 +168,18 @@ class Entity(object):
     # Calculations
 
     def check_variable_defined_for_entity(self, variable_name):
-        variable_entity = self.simulation.tax_benefit_system.get_variable(variable_name, check_existence = True).entity
-        if not isinstance(self, variable_entity):
-            message = linesep.join([
-                u"You tried to compute the variable '{0}' for the entity '{1}';".format(variable_name, self.plural),
-                u"however the variable '{0}' is defined for '{1}'.".format(variable_name, variable_entity.plural),
-                u"Learn more about entities in our documentation:",
-                u"<http://openfisca.org/doc/coding-the-legislation/50_entities.html>."])
-            raise ValueError(message)
+        if variable_name not in variables_for_self:
+            variable_entity = self.simulation.tax_benefit_system.get_variable(variable_name, check_existence = True).entity
+            if not isinstance(self, variable_entity):
+                message = linesep.join([
+                    u"You tried to compute the variable '{0}' for the entity '{1}';".format(variable_name, self.plural),
+                    u"however the variable '{0}' is defined for '{1}'.".format(variable_name, variable_entity.plural),
+                    u"Learn more about entities in our documentation:",
+                    u"<http://openfisca.org/doc/coding-the-legislation/50_entities.html>."])
+                raise ValueError(message)
+            
+            else:
+                variables_for_self.add(variable_name)
 
     def check_array_compatible_with_entity(self, array):
         if not self.count == array.size:
