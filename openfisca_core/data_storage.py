@@ -15,15 +15,10 @@ class InMemoryStorage(object):
     Low-level class responsible for storing and retrieving calculated vectors in memory
     """
 
-    def __init__(self, is_eternal = False):
+    def __init__(self):
         self._arrays = {}
-        self.is_eternal = is_eternal
 
     def get(self, period, extra_params = None):
-        if self.is_eternal:
-            period = periods.period(ETERNITY)
-        period = periods.period(period)
-
         values = self._arrays.get(period)
         if values is None:
             return None
@@ -34,10 +29,6 @@ class InMemoryStorage(object):
         return values
 
     def put(self, value, period, extra_params = None):
-        if self.is_eternal:
-            period = periods.period(ETERNITY)
-        period = periods.period(period)
-
         if not extra_params:
             self._arrays[period] = value
         else:
@@ -49,10 +40,6 @@ class InMemoryStorage(object):
         if period is None:
             self._arrays = {}
             return
-
-        if self.is_eternal:
-            period = periods.period(ETERNITY)
-        period = periods.period(period)
 
         self._arrays = {
             period_item: value

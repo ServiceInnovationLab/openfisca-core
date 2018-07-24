@@ -30,7 +30,7 @@ class Holder(object):
         self.variable = variable
         self.simulation = entity.simulation
         self.buffer = {}
-        self._memory_storage = InMemoryStorage(is_eternal = (self.variable.definition_period == ETERNITY))
+        self._memory_storage = InMemoryStorage()
 
         # By default, do not activate on-disk storage, or variable dropping
         self._disk_storage = None
@@ -71,7 +71,7 @@ class Holder(object):
 
         """
 
-        self._memory_storage.delete(period)
+        self._memory_storage.delete(periods.period(period))
         if self._disk_storage:
             self._disk_storage.delete(period)
 
@@ -83,7 +83,7 @@ class Holder(object):
         """
         if self.variable.is_neutralized:
             return self.default_array()
-        value = self._memory_storage.get(period, extra_params)
+        value = self._memory_storage.get(periods.period(period), extra_params)
         if value is not None:
             return value
         if self._disk_storage:
@@ -218,14 +218,14 @@ class Holder(object):
 
         should_store_on_disk = (
             self._on_disk_storable and
-            self._memory_storage.get(period, extra_params) is None and  # If there is already a value in memory, replace it and don't put a new value in the disk storage
+            self._memory_storage.get(periods.period(period), extra_params) is None and  # If there is already a value in memory, replace it and don't put a new value in the disk storage
             psutil.virtual_memory().percent >= self.simulation.memory_config.max_memory_occupation_pc
             )
 
         if should_store_on_disk:
             self._disk_storage.put(value, period, extra_params)
         else:
-            self._memory_storage.put(value, period, extra_params)
+            self._memory_storage.put(value, periods.period(period), extra_params)
 
     def put_in_cache(self, value, period, extra_params = None):
         if self._do_not_store:
