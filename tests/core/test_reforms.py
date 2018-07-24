@@ -128,8 +128,9 @@ def test_permanent_variable_neutralization():
     with warnings.catch_warnings(record=True) as raised_warnings:
         reform_simulation = scenario.new_simulation()
         assert 'You cannot set a value for the variable' in raised_warnings[0].message.args[0]
-    assert str(simulation.calculate('birth', None)[0]) == '1980-01-01'
+    assert str(simulation.calculate('birth', '2013')[0]) == '1980-01-01'
     assert str(reform_simulation.calculate('birth', None)[0]) == '1970-01-01'
+
 
 
 def test_update_items():
