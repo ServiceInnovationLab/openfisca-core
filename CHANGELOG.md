@@ -26,6 +26,13 @@ Country package maintainers who want to provide the Web API as an opt-in of thei
 - Transparent for users of the `openfisca serve` command.
 - Users who used to manually import `openfisca_web_api_preview` must know import `openfisca_web_api`.
 
+#### New features
+
+- In the `/spec` route:
+  - Indicate the country package version instead of `0.1.0`.
+  - Infer the host URL from the requests, instead of relying on the undocumented `SERVER_NAME` environnement variable.
+    - The use of the `SERVER_NAME` environnement variable is therefore deprecated and without effect.
+
 ### 23.3.2 [#702](https://github.com/openfisca/openfisca-core/pull/702)
 
 Minor Change without impacts for reusers:
