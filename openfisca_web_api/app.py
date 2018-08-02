@@ -86,6 +86,8 @@ def create_app(tax_benefit_system,
 
     @app.route('/spec')
     def get_spec():
+        if data['openAPI_spec'].get('host') is None:
+            data['openAPI_spec']['host'] = request.host_url
         return jsonify(data['openAPI_spec'])
 
     def handle_invalid_json(error):
