@@ -33,6 +33,7 @@ def define_command_line_options(parser):
     parser.add_argument('--tracker-url', action = 'store', help = "tracking service url", type = str)
     parser.add_argument('--tracker-idsite', action = 'store', help = "tracking service id site", type = int)
     parser.add_argument('--tracker-token', action = 'store', help = "tracking service authentication token", type = str)
+    parser.add_argument('--welcome-message', action = 'store', help = "welcome message users will get when visiting the API root", type = str)
     parser.add_argument('-f', '--configuration-file', action = 'store', help = "configuration file", type = str)
 
     return parser
@@ -91,7 +92,9 @@ class OpenFiscaWebAPIApplication(BaseApplication):
         return create_app(
             tax_benefit_system,
             self.options.get('tracker_url'),
-            self.options.get('tracker_idsite')
+            self.options.get('tracker_idsite'),
+            self.options.get('tracker_token'),
+            self.options.get('welcome_message')
             )
 
 
