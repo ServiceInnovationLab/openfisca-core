@@ -29,7 +29,7 @@ Country package maintainers who still want to provide the Web API by default wit
 #### New features
 
 - In the `/spec` route:
-  - Indicate the country package version instead of `0.1.0`.
+  - Indicate the served country package version as API version (instead of `0.1.0`).
   - Infer the host URL from the requests, instead of relying on the undocumented `SERVER_NAME` environnement variable.
     - The use of the `SERVER_NAME` environnement variable is therefore deprecated and without effect.
 
