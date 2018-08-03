@@ -22,7 +22,7 @@ Country package maintainers who still want to provide the Web API by default wit
 - Transparent for users of the `openfisca serve` command.
 - Users who used to manually import `openfisca_web_api_preview` must know import `openfisca_web_api`.
 
-##### Rename development dependencies to `dev`:
+##### Rename development dependencies from `test` to `dev`:
 
 - Developpers should now run `pip install --editable .[dev]` instead of `pip install --editable .[test]` to install them.
 
