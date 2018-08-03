@@ -1,6 +1,6 @@
 # Changelog
 
-### 23.4.0 [#???](https://github.com/openfisca/openfisca-core/pull/???)
+### 23.4.0 [#705](https://github.com/openfisca/openfisca-core/pull/705)
 
 * On the Web API, expose a welcome message (with a 300 code) on `/` instead of a 404 error.
 
