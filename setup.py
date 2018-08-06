@@ -4,7 +4,26 @@
 
 from __future__ import unicode_literals
 from setuptools import setup, find_packages
+import os
 
+general_requirements = [
+    'Biryani[datetimeconv] >= 0.10.8',
+    'dpath == 1.4.0',
+    'enum34 >= 1.1.6',
+    'future',
+    'numpy >= 1.11, < 1.15',
+    'psutil == 5.4.6',
+    'PyYAML >= 3.10',
+    'sortedcontainers == 1.5.9',
+    ]
+
+api_requirements = [
+    'flask == 0.12',
+    'flask-cors == 3.0.2',
+    'gunicorn >= 19.7.1',
+    ]
+
+requirements = general_requirements if os.environ.get('OPT_OUT_API') else (general_requirements + api_requirements)
 
 setup(
     name = 'OpenFisca-Core',
@@ -39,23 +58,9 @@ setup(
         'tracker': [
             'openfisca-tracker == 0.4.0',
             ],
-        'api': [
-            'flask == 0.12',
-            'flask-cors == 3.0.2',
-            'gunicorn >= 19.7.1',
-            ]
         },
     include_package_data = True,  # Will read MANIFEST.in
-    install_requires = [
-        'Biryani[datetimeconv] >= 0.10.8',
-        'dpath == 1.4.0',
-        'enum34 >= 1.1.6',
-        'future',
-        'numpy >= 1.11, < 1.15',
-        'psutil == 5.4.6',
-        'PyYAML >= 3.10',
-        'sortedcontainers == 1.5.9',
-        ],
+    install_requires = requirements,
     message_extractors = {
         'openfisca_core': [
             ('**.py', 'python', None),
