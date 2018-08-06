@@ -1,5 +1,10 @@
 # Changelog
 
+### 23.3.2 [#708](https://github.com/openfisca/openfisca-core/pull/708)
+
+- Addresses the typecasting from `float32` to `float64` made when outputing numbers in the API and in `openfisca-run-test`.
+- The typecasting added random decimal numbers that brought no extra value to the users.
+
 ### 23.3.1 [#682](https://github.com/openfisca/openfisca-core/pull/682)
 
 * Send reference of the country-package and its version to the tracker so it will appear in the tracking statistics.
