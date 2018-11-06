@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 
 general_requirements = [
     'Biryani[datetimeconv] >= 0.10.8',
-    'dpath == 1.4.0',
+    'dpath ==1.4.2',
     'enum34 >= 1.1.6',
     'future',
     'nose',  # For openfisca-run-test
