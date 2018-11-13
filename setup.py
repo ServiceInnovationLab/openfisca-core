@@ -25,7 +25,7 @@ api_requirements = [
     ]
 
 dev_requirements = [
-    'autopep8 == 1.4.0',
+    'autopep8 ==1.4.3',
     'flake8 >= 3.5.0, < 3.6.0',
     'pycodestyle >= 2.3.0, < 2.4.0',  # To avoid incompatibility with flake8
     'pytest',
