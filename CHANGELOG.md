@@ -1,8 +1,22 @@
 # Changelog
 
+## 24.9.0 [#767](https://github.com/openfisca/openfisca-core/pull/767)
+
+- Introduce `ParameterNode.get_descendants`
+  - This method returns a generator containing all the parameters and nodes recursively contained in the `ParameterNode`
+
+### 24.8.2 [#773](https://github.com/openfisca/openfisca-core/pull/773)
+
+- Make sure to cap all dependency versions, in order to avoid unwanted functional and integration breaks caused by external code updates
+  - For example [#772](https://github.com/openfisca/openfisca-core/pull/772)
+
+### 24.8.1 [#772](https://github.com/openfisca/openfisca-core/pull/772)
+
+- Limits the range of PyTest versions to < 4.0 to avoid CI crashes caused by 4.0.
+
 ## 24.8.0 [#765](https://github.com/openfisca/openfisca-core/pull/765)
 
-- Add called parameters to Web API `/trace` endpoint
+- Adds called parameters to Web API `/trace` endpoint
   - For a calculated variable, add `parameters` item next to `dependencies` in `/trace` response
   - For example:
   ```JSON

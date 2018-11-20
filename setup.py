@@ -5,13 +5,15 @@
 from __future__ import unicode_literals, print_function, division, absolute_import
 from setuptools import setup, find_packages
 
+# Please make sure to cap all dependency versions, in order to avoid unwanted
+# functional and integration breaks caused by external code updates.
 
 general_requirements = [
     'Biryani[datetimeconv] >= 0.10.8',
     'dpath == 1.4.0',
     'enum34 >= 1.1.6',
-    'future',
-    'nose',  # For openfisca-run-test
+    'future < 1.0.0',
+    'nose < 2.0.0',  # For openfisca-run-test
     'numpy >= 1.11, < 1.16',
     'psutil == 5.4.6',
     'PyYAML >= 3.10',
@@ -35,7 +37,7 @@ dev_requirements = [
 
 setup(
     name = 'OpenFisca-Core',
-    version = '24.8.0',
+    version = '24.9.0',
     author = 'OpenFisca Team',
     author_email = 'contact@openfisca.org',
     classifiers = [
