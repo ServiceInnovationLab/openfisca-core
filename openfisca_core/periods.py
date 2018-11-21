@@ -814,9 +814,9 @@ def period(value):
 
     def raise_error(value):
         message = linesep.join([
-            "Expected a period (eg. '2017', '2017-01', ...); got: '{}'.".format(value),
+            "Expected a period (eg. '2017', '2017-01', '2017-01-01', ...); got: '{}'.".format(value),
             "Learn more about legal period formats in OpenFisca:",
-            "<https://openfisca.org/doc/coding-the-legislation/35_periods.html#periods-in-simulations>."
+            "<https://openfisca.org/doc/key-concepts/periodsinstants.html>."
             ]).encode('utf-8')
         raise ValueError(message)
 
@@ -842,7 +842,7 @@ def period(value):
 
     # left-most component must be a valid unit
     unit = components[0]
-    if unit not in (MONTH, YEAR):
+    if unit not in (DAY, MONTH, YEAR):
         raise_error(value)
 
     # middle component must be a valid iso period
@@ -864,7 +864,7 @@ def period(value):
         raise_error(value)
 
     # reject ambiguous period such as month:2014
-    if base_period.unit == YEAR and unit == MONTH:
+    if base_period.unit != unit:
         raise_error(value)
 
     return Period((unit, base_period.start, size))
