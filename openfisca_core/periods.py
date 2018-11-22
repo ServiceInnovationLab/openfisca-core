@@ -806,7 +806,12 @@ def period(value):
             try:
                 date = datetime.datetime.strptime(value, '%Y-%m')
             except ValueError:
-                return None
+                try:
+                    date = datetime.datetime.strptime(value, '%Y-%m-%d')
+                except ValueError:
+                    return None
+                else:
+                    return Period((DAY, Instant((date.year, date.month, date.day)), 1))
             else:
                 return Period((MONTH, Instant((date.year, date.month, 1)), 1))
         else:
