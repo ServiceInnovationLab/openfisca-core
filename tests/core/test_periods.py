@@ -49,12 +49,10 @@ def test_several_months():
 
 # Days
 
-@pytest.mark.xfail
 def test_day():
     assert to_unicode(Period((DAY, first_jan, 1))) == '2014-01-01'
 
 
-@pytest.mark.xfail
 def test_several_days():
     assert to_unicode(Period((DAY, first_jan, 3))) == 'day:2014-01-01:3'
     assert to_unicode(Period((DAY, first_march, 3))) == 'day:2014-03-01:3'
