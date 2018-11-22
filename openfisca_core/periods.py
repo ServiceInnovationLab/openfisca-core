@@ -842,7 +842,7 @@ def period(value):
 
     # left-most component must be a valid unit
     unit = components[0]
-    if unit not in (MONTH, YEAR):
+    if unit not in (DAY, MONTH, YEAR):
         raise_error(value)
 
     # middle component must be a valid iso period
