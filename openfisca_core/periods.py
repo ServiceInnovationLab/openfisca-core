@@ -814,9 +814,9 @@ def period(value):
 
     def raise_error(value):
         message = linesep.join([
-            "Expected a period (eg. '2017', '2017-01', ...); got: '{}'.".format(value),
+            "Expected a period (eg. '2017', '2017-01', '2017-01-01', ...); got: '{}'.".format(value),
             "Learn more about legal period formats in OpenFisca:",
-            "<http://openfisca.org/doc/periodsinstants.html#api>."
+            "<https://openfisca.org/doc/key-concepts/periodsinstants.html>."
             ]).encode('utf-8')
         raise ValueError(message)
 
