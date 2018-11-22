@@ -892,6 +892,7 @@ def key_period_size(period):
     """
 
     unit_weights = {
+        DAY: 0,
         MONTH: 1,
         YEAR: 2,
         ETERNITY: 3,
