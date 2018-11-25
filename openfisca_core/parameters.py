@@ -163,7 +163,7 @@ class Parameter(object):
             if instant_info == "expected" or isinstance(instant_info, dict) and instant_info.get("expected"):
                 continue
 
-            value_name = _compose_name(name, instant_str)
+            value_name = _compose_name(name, item_name = instant_str)
             value_at_instant = ParameterAtInstant(value_name, instant_str, data = instant_info, file_path = self.file_path, metadata = self.metadata)
             values_list.append(value_at_instant)
 
@@ -228,16 +228,16 @@ class Parameter(object):
             else:
                 if i < n:
                     overlapped_value = old_values[i].value
-                    value_name = _compose_name(self.name, stop_str)
+                    value_name = _compose_name(self.name, item_name = stop_str)
                     new_interval = ParameterAtInstant(value_name, stop_str, data = {'value': overlapped_value})
                     new_values.append(new_interval)
                 else:
-                    value_name = _compose_name(self.name, stop_str)
+                    value_name = _compose_name(self.name, item_name = stop_str)
                     new_interval = ParameterAtInstant(value_name, stop_str, data = {'value': None})
                     new_values.append(new_interval)
 
         # Insert new interval
-        value_name = _compose_name(self.name, start_str)
+        value_name = _compose_name(self.name, item_name = start_str)
         new_interval = ParameterAtInstant(value_name, start_str, data = {'value': value})
         new_values.append(new_interval)
 
@@ -316,7 +316,7 @@ class ParameterAtInstant(object):
 
 class ParameterNode(object):
     """
-        A node in the legislation `parameter tree <http://openfisca.org/doc/coding-the-legislation/legislation_parameters.html>`_.
+        A node in the legislation `parameter tree <https://openfisca.org/doc/coding-the-legislation/legislation_parameters.html>`_.
     """
 
     _allowed_keys = None  # By default, no restriction on the keys
@@ -380,15 +380,13 @@ class ParameterNode(object):
                     else:
                         child_name_expanded = _compose_name(name, child_name)
                         child = load_parameter_file(child_path, child_name_expanded)
-                        self.children[child_name] = child
-                        setattr(self, child_name, child)
+                        self.add_child(child_name, child)
 
                 elif os.path.isdir(child_path):
                     child_name = os.path.basename(child_path)
                     child_name_expanded = _compose_name(name, child_name)
                     child = ParameterNode(child_name_expanded, directory_path = child_path)
-                    self.children[child_name] = child
-                    setattr(self, child_name, child)
+                    self.add_child(child_name, child)
 
         else:
             self.file_path = file_path
@@ -404,8 +402,7 @@ class ParameterNode(object):
                 child_name = str(child_name)
                 child_name_expanded = _compose_name(name, child_name)
                 child = _parse_child(child_name_expanded, child, file_path)
-                self.children[child_name] = child
-                setattr(self, child_name, child)
+                self.add_child(child_name, child)
 
     def __call__(self, instant):
         return self.get_at_instant(instant)
@@ -424,7 +421,7 @@ class ParameterNode(object):
         In case of child name conflict, the other node child will replace the current node child.
         """
         for child_name, child in other.children.items():
-            self.children[child_name] = child
+            self.add_child(child_name, child)
 
     def add_child(self, name, child):
         """
@@ -481,11 +478,14 @@ class ParameterNodeAtInstant(object):
         for child_name, child in node.children.items():
             child_at_instant = child._get_at_instant(instant_str)
             if child_at_instant is not None:
-                self._children[child_name] = child_at_instant
-                setattr(self, child_name, child_at_instant)
+                self.add_child(child_name, child_at_instant)
+
+    def add_child(self, child_name, child_at_instant):
+        self._children[child_name] = child_at_instant
+        setattr(self, child_name, child_at_instant)
 
     def __getattr__(self, key):
-        param_name = _compose_name(self._name, key)
+        param_name = _compose_name(self._name, item_name = key)
         raise ParameterNotFound(param_name, self._instant_str)
 
     def __getitem__(self, key):
@@ -542,7 +542,7 @@ class VectorialParameterNodeAtInstant(object):
         """
         MESSAGE_PART_1 = "Cannot use fancy indexing on parameter node '{}', as"
         MESSAGE_PART_3 = "To use fancy indexing on parameter node, its children must be homogenous."
-        MESSAGE_PART_4 = "See more at <http://openfisca.org/doc/coding-the-legislation/legislation_parameters#computing-a-parameter-that-depends-on-a-variable>."
+        MESSAGE_PART_4 = "See more at <https://openfisca.org/doc/coding-the-legislation/legislation_parameters#computing-a-parameter-that-depends-on-a-variable-fancy-indexing>."
 
         def raise_key_inhomogeneity_error(node_with_key, node_without_key, missing_key):
             message = " ".join([
@@ -702,7 +702,7 @@ class Scale(object):
 
         brackets = []
         for i, bracket_data in enumerate(data['brackets']):
-            bracket_name = _compose_name(name, i)
+            bracket_name = _compose_name(name, item_name = i)
             bracket = Bracket(name = bracket_name, data = bracket_data, file_path = file_path)
             brackets.append(bracket)
         self.brackets = brackets
@@ -813,13 +813,13 @@ def _parse_child(child_name, child, child_path):
         return ParameterNode(child_name, data = child, file_path = child_path)
 
 
-def _compose_name(path, child_name):
-    if path:
-        if isinstance(child_name, int) or INSTANT_PATTERN.match(child_name):
-            return '{}[{}]'.format(path, child_name)
-        return '{}.{}'.format(path, child_name)
-    else:
+def _compose_name(path, child_name = None, item_name = None):
+    if not path:
         return child_name
+    if child_name is not None:
+        return '{}.{}'.format(path, child_name)
+    if item_name is not None:
+        return '{}[{}]'.format(path, item_name)
 
 
 def _validate_parameter(parameter, data, data_type = None, allowed_keys = None):

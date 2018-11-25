@@ -79,7 +79,7 @@ class Entity(object):
 
             if not isinstance(variable_values, dict):
                 raise SituationParsingError(path_in_json,
-                    "Invalid type: must be of type object. Input variables must be set for specific periods. For instance: {'salary': {'2017-01': 2000, '2017-02': 2500}}, or {'birth_date': {'ETERNITY': '1980-01-01'}}.")
+                    "Can't deal with type: expected object. Input variables should be set for specific periods. For instance: {'salary': {'2017-01': 2000, '2017-02': 2500}}, or {'birth_date': {'ETERNITY': '1980-01-01'}}.")
 
             holder = self.get_holder(variable_name)
             for period_str, value in variable_values.items():
@@ -98,16 +98,19 @@ class Entity(object):
                         except KeyError:
                             possible_values = [item.name for item in holder.variable.possible_values]
                             raise SituationParsingError(path_in_json,
-                                "'{}' is not a valid value for '{}'. Possible values are ['{}'].".format(
+                                "'{}' is not a known value for '{}'. Possible values are ['{}'].".format(
                                     value, variable_name, "', '".join(possible_values))
                                 )
                     try:
                         array[entity_index] = value
+                    except (OverflowError):
+                        error_message = "Can't deal with value: '{}', it's too large for type '{}'.".format(value, holder.variable.json_type)
+                        raise SituationParsingError(path_in_json, error_message)
                     except (ValueError, TypeError):
                         if holder.variable.value_type == date:
-                            error_message = "Invalid date: '{}'.".format(value)
+                            error_message = "Can't deal with date: '{}'.".format(value)
                         else:
-                            error_message = "Invalid value: must be of type {}, received '{}'.".format(holder.variable.json_type, value)
+                            error_message = "Can't deal with value: expected type {}, received '{}'.".format(holder.variable.json_type, value)
                         raise SituationParsingError(path_in_json, error_message)
 
                     holder.buffer[period] = array
@@ -179,7 +182,7 @@ class Entity(object):
                 "You tried to compute the variable '{0}' for the entity '{1}';".format(variable_name, self.plural),
                 "however the variable '{0}' is defined for '{1}'.".format(variable_name, variable_entity.plural),
                 "Learn more about entities in our documentation:",
-                "<http://openfisca.org/doc/coding-the-legislation/50_entities.html>."])
+                "<https://openfisca.org/doc/coding-the-legislation/50_entities.html>."])
             raise ValueError(message)
 
     def check_array_compatible_with_entity(self, array):
@@ -200,7 +203,7 @@ You requested computation of variable "{}", but you did not specify on which per
     {}
 When you request the computation of a variable within a formula, you must always specify the period as the second parameter. The convention is to call this parameter "period". For example:
     computed_salary = person('salary', period).
-See more information at <http://openfisca.org/doc/coding-the-legislation/35_periods.html#periods-for-variable>.
+See more information at <https://openfisca.org/doc/coding-the-legislation/35_periods.html#periods-in-variable-definition>.
 '''.format(variable_name, filename, line_number, line_of_code).encode('utf-8'))
 
     def __call__(self, variable_name, period = None, options = [], **parameters):
