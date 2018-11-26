@@ -600,8 +600,27 @@ class Period(tuple):
         """
         if (self[0] == MONTH):
             return self[2]
-        else:
+        if(self[0] == YEAR):
             return self[2] * 12
+        raise ValueError("Cannot calculate number of months in {0}".format(self[0]))
+
+    @property
+    def size_in_days(self):
+        """Return the size of the period in months.
+
+        >>> period('month', '2012-2-29', 4).size_in_days
+        4
+        >>> period('year', '2012', 1).size_in_days
+        12
+        """
+        if (self[0] == DAY):
+            return self[2]
+        # if (self[0] == MONTH):
+        #     return self.[2].....
+        if (self[0] == YEAR):
+            days = self[2] * 365 # TODO leap days
+            leap_days = 1
+            return days + leap_days
 
     @property
     def start(self):
