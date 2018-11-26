@@ -429,8 +429,9 @@ class Period(tuple):
             >>> period('year:2014:2').get_subperiods(YEAR)
             >>> [period('2014'), period('2015')]
         """
-        if self.unit == MONTH and unit == YEAR:
-            raise ValueError('Cannot subdivise months into years')
+        if unit_weight(self.unit) < unit_weight(unit):
+            raise ValueError('Cannot subdivise {0} into {1}'.format(self.unit, unit))
+
         if self.unit == YEAR and unit == YEAR:
             return [self.this_year.offset(i, YEAR) for i in range(self.size)]
 
@@ -910,18 +911,23 @@ def key_period_size(period):
 
     """
 
-    unit_weights = {
-        DAY: 0,
-        MONTH: 1,
-        YEAR: 2,
-        ETERNITY: 3,
-        }
 
     unit, start, size = period
 
-    return '{}_{}'.format(unit_weights[unit], size)
+    return '{}_{}'.format(unit_weights()[unit], size)
 
 
+def unit_weights():
+    return {
+        DAY: 100,
+        MONTH: 200,
+        YEAR: 300,
+        ETERNITY: 400,
+    }
+
+
+def unit_weight(unit):
+  return unit_weights()[unit]
 # Level-1 converters
 
 
