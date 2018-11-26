@@ -324,8 +324,8 @@ class Period(tuple):
         unit, start_instant, size = self
         if unit == ETERNITY:
             return 'ETERNITY'
-        start_instant = start_instant[:2]  # we always ignore the day, 1 by construction
-        year, month = start_instant
+        # start_instant = start_instant[:2]  # we always ignore the day, 1 by construction
+        year, month, day = start_instant
 
         # 1 year long period
         if (unit == MONTH and size == 12 or unit == YEAR and size == 1):
@@ -342,6 +342,8 @@ class Period(tuple):
         if unit == YEAR and month == 1:
             return '{}:{}:{}'.format(unit, year, size)
 
+        if unit == DAY:
+            return '{}-{:02d}-{:02d}'.format(year, month, day)
         # complex period
         return '{}:{}-{:02d}:{}'.format(unit, year, month, size)
 
