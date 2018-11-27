@@ -923,7 +923,7 @@ def key_period_size(period):
 
     unit, start, size = period
 
-    return '{}_{}'.format(unit_weights()[unit], size)
+    return '{}_{}'.format(unit_weight(unit), size)
 
 
 def unit_weights():
