@@ -213,14 +213,19 @@ class Instant(tuple):
         """
         year, month, day = self
         if offset == 'first-of':
-            if unit == 'month':
+            if unit == 'day':
+                pass
+            elif unit == 'month':
                 day = 1
             else:
                 assert unit == 'year', 'Invalid unit: {} of type {}'.format(unit, type(unit))
                 month = 1
                 day = 1
         elif offset == 'last-of':
-            if unit == 'month':
+            if unit == 'day':
+                pass
+                # day = (datetime.datetime(year, month, day) + datetime.timedelta(days=offset)).day
+            elif unit == 'month':
                 day = calendar.monthrange(year, month)[1]
             else:
                 assert unit == 'year', 'Invalid unit: {} of type {}'.format(unit, type(unit))
@@ -613,21 +618,25 @@ class Period(tuple):
 
     @property
     def size_in_days(self):
-        """Return the size of the period in months.
+        """Return the size of the period in days.
 
         >>> period('month', '2012-2-29', 4).size_in_days
         4
         >>> period('year', '2012', 1).size_in_days
         12
         """
-        if (self[0] == DAY):
-            return self[2]
-        # if (self[0] == MONTH):
-        #     return self.[2].....
-        if (self[0] == YEAR):
-            days = self[2] * 365  # TODO leap days
-            leap_days = 1
-            return days + leap_days
+        # return (self.stop.date - self.start.date).days
+        period, instant, length = self
+
+        if period == DAY:
+            return length
+        if period in [MONTH, YEAR]:
+            if length == 1:
+                return (self.start.offset('last-of', period).date - self.start.offset('first-of', period).date).days + 1
+            else:
+                return (self.stop.offset('first-of', period).date - self.start.offset('first-of', period).date).days
+
+        raise ValueError("Cannot calculate number of days in {0}".format(period))
 
     @property
     def start(self):
