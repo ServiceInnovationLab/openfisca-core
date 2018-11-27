@@ -895,7 +895,7 @@ def period(value):
         raise_error(value)
 
     # reject ambiguous period such as month:2014
-    if base_period.unit != unit:
+    if base_period.unit == YEAR and unit == MONTH:
         raise_error(value)
 
     return Period((unit, base_period.start, size))
