@@ -99,12 +99,10 @@ def test_wrong_syntax_several_months():
 
 # Days
 
-@pytest.mark.xfail
 def test_parsing_day():
     assert period('2014-01-01') == Period((DAY, first_jan, 1))
 
 
-@pytest.mark.xfail
 def test_parsing_several_days():
     assert period('day:2014-03-01:3') == Period((DAY, first_march, 3))
 
