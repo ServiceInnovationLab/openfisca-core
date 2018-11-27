@@ -1,5 +1,10 @@
 # Changelog
 
+### 24.10.0 [#766](https://github.com/openfisca/openfisca-core/pull/766)
+
+- Support for DAY periods in variables and simulations
+
+
 ### 24.9.7 [#769](https://github.com/openfisca/openfisca-core/pull/769)
 
 - Unify the protocol for appending sub-parameters
