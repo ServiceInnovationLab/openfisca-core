@@ -619,9 +619,9 @@ class Period(tuple):
         """Return the size of the period in days.
 
         >>> period('month', '2012-2-29', 4).size_in_days
-        4
+        28
         >>> period('year', '2012', 1).size_in_days
-        12
+        366
         """
         # return (self.stop.date - self.start.date).days
         period, instant, length = self
