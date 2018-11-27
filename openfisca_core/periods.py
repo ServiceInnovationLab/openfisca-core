@@ -224,7 +224,6 @@ class Instant(tuple):
         elif offset == 'last-of':
             if unit == 'day':
                 pass
-                # day = (datetime.datetime(year, month, day) + datetime.timedelta(days=offset)).day
             elif unit == 'month':
                 day = calendar.monthrange(year, month)[1]
             else:
@@ -329,7 +328,6 @@ class Period(tuple):
         unit, start_instant, size = self
         if unit == ETERNITY:
             return 'ETERNITY'
-        # start_instant = start_instant[:2]  # we always ignore the day, 1 by construction
         year, month, day = start_instant
 
         # 1 year long period

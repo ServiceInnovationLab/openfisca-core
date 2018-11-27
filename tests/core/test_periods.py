@@ -113,35 +113,35 @@ def test_wrong_syntax_several_days():
 
 
 def test_day_size_in_days():
-    assert Period(('day', Instant((2014, 12, 31)), 1)).size_in_days, 1
+    assert Period(('day', Instant((2014, 12, 31)), 1)).size_in_days == 1
 
 
 def test_3_day_size_in_days():
-    assert Period(('day', Instant((2014, 12, 31)), 3)).size_in_days, 3
+    assert Period(('day', Instant((2014, 12, 31)), 3)).size_in_days == 3
 
 
 def test_month_size_in_days():
-    assert Period(('month', Instant((2014, 12, 1)), 1)).size_in_days, 31
+    assert Period(('month', Instant((2014, 12, 1)), 1)).size_in_days == 31
 
 
 def test_leap_month_size_in_days():
-    assert Period(('month', Instant((2012, 2, 3)), 1)).size_in_days, 29
+    assert Period(('month', Instant((2012, 2, 3)), 1)).size_in_days == 29
 
 
 def test_3_month_size_in_days():
-    assert Period(('month', Instant((2013, 1, 3)), 3)).size_in_days, 31 + 28 + 31
+    assert Period(('month', Instant((2013, 1, 3)), 3)).size_in_days == 31 + 28 + 31
 
 
 def test_leap_3_month_size_in_days():
-    assert Period(('month', Instant((2012, 1, 3)), 3)).size_in_days, 31 + 29 + 31
+    assert Period(('month', Instant((2012, 1, 3)), 3)).size_in_days == 31 + 29 + 31
 
 
 def test_year_size_in_days():
-    assert Period(('year', Instant((2014, 12, 1)), 1)).size_in_days, 365
+    assert Period(('year', Instant((2014, 12, 1)), 1)).size_in_days == 365
 
 
 def test_leap_year_size_in_days():
-    assert Period(('year', Instant((2012, 12, 1)), 1)).size_in_days, 366
+    assert Period(('year', Instant((2012, 12, 1)), 1)).size_in_days == 366
 
 
 # Misc
