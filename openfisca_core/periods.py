@@ -618,7 +618,6 @@ class Period(tuple):
         >>> period('year', '2012', 1).size_in_days
         366
         """
-        # return (self.stop.date - self.start.date).days
         period, instant, length = self
 
         if period == DAY:
