@@ -621,7 +621,7 @@ class Period(tuple):
         # if (self[0] == MONTH):
         #     return self.[2].....
         if (self[0] == YEAR):
-            days = self[2] * 365 # TODO leap days
+            days = self[2] * 365  # TODO leap days
             leap_days = 1
             return days + leap_days
 
@@ -913,7 +913,6 @@ def key_period_size(period):
 
     """
 
-
     unit, start, size = period
 
     return '{}_{}'.format(unit_weights()[unit], size)
@@ -925,11 +924,11 @@ def unit_weights():
         MONTH: 200,
         YEAR: 300,
         ETERNITY: 400,
-    }
+        }
 
 
 def unit_weight(unit):
-  return unit_weights()[unit]
+    return unit_weights()[unit]
 # Level-1 converters
 
 
