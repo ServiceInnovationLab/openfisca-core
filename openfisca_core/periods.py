@@ -342,8 +342,12 @@ class Period(tuple):
         if unit == YEAR and month == 1:
             return '{}:{}:{}'.format(unit, year, size)
 
-        if unit == DAY and size == 1:
-            return '{}-{:02d}-{:02d}'.format(year, month, day)
+        if unit == DAY:
+            if size == 1:
+                return '{}-{:02d}-{:02d}'.format(year, month, day)
+            else:
+                return '{}:{}-{:02d}-{:02d}:{}'.format(unit, year, month, day, size)
+
         # complex period
         return '{}:{}-{:02d}:{}'.format(unit, year, month, size)
 
