@@ -434,7 +434,7 @@ class Period(tuple):
             >>> [period('2014'), period('2015')]
         """
         if unit_weight(self.unit) < unit_weight(unit):
-            raise ValueError('Cannot subdivise {0} into {1}'.format(self.unit, unit))
+            raise ValueError('Cannot subdivide {0} into {1}'.format(self.unit, unit))
 
         if self.unit == YEAR and unit == YEAR:
             return [self.this_year.offset(i, YEAR) for i in range(self.size)]
