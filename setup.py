@@ -13,7 +13,7 @@ general_requirements = [
     'future',
     'nose',  # For openfisca-run-test
     'numpy >= 1.11, < 1.16',
-    'psutil == 5.4.6',
+    'psutil ==5.5.0',
     'PyYAML >= 3.10',
     'sortedcontainers == 1.5.9',
     ]
