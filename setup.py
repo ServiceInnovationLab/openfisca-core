@@ -27,7 +27,7 @@ api_requirements = [
 dev_requirements = [
     'autopep8 == 1.4.0',
     'flake8 >= 3.5.0, < 3.6.0',
-    'pycodestyle >= 2.3.0, < 2.4.0',  # To avoid incompatibility with flake8
+    'pycodestyle >=2.3.0,<2.6.0',  # To avoid incompatibility with flake8
     'pytest',
     'openfisca-country-template >= 3.4.0, < 4.0.0',
     'openfisca-extension-template >= 1.1.3, < 2.0.0',
